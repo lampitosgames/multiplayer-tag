@@ -6,6 +6,10 @@ app.keys = (function() {
     //Object containing key states
     let keys = {};
 
+    //Mouse state variables
+    let mouse;
+    let mouseDown;
+
     function init() {
         //Add an event listener for keydown
         window.addEventListener("keydown", function(e) {
@@ -45,13 +49,10 @@ app.keys = (function() {
             }
         });
 
-
-        //Bind keyup for pause/unpause
-        keyUp("p", function() {
-            app.main.togglePause(!app.state.main.paused);
-        });
-        keyUp("d", function() {
-            app.main.toggleDebug(!app.state.main.debug);
+        //Add an event listener for mouse movement
+        window.addEventListener("mousemove", function(e) {
+            //Get the mouse position
+            mouse = [e.clientX, e.clientY];
         });
     }
 
@@ -175,10 +176,30 @@ app.keys = (function() {
         return keyCode;
     }
 
+    /**
+     * App-specific function that binds mouse clicks to the canvas so other
+     * modules can query it
+     */
+    function bindMouse() {
+        app.canvas.addEventListener('mousedown', function() {
+            mouseDown = true;
+        });
+        app.canvas.addEventListener('mouseup', function() {
+            mouseDown = false;
+        });
+    }
+
     return {
         init: init,
+        bindMouse: bindMouse,
         keyUp: keyUp,
         keyDown: keyDown,
-        pressed: pressed
+        pressed: pressed,
+        mouse: function() {
+            return mouse;
+        },
+        mouseDown: function() {
+            return mouseDown;
+        }
     }
 }());

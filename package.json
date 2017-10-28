@@ -11,9 +11,9 @@
         "npm"
     ],
     "scripts": {
-        "start": "nodemon app/index.js --exec babel-node",
+        "start": "nodemon app/server.js --exec babel-node",
         "build": "babel app -d dist",
-        "serve": "node dist/index.js"
+        "serve": "node dist/server.js"
     },
     "author": "Daniel Timko <det2948@rit.edu>",
     "license": "MIT",
@@ -27,6 +27,8 @@
         "nodemon": "^1.12.1"
     },
     "dependencies": {
-        "express": "^4.16.2"
+        "express": "^4.16.2",
+        "socket.io": "^2.0.4",
+        "victor": "^1.1.0"
     }
 }

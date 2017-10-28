@@ -8,22 +8,44 @@ window.onload = function() {
     app.mouse = [0, 0];
 
     //Initialize modules
-    app.time.init();
     app.keys.init();
-    app.audio.init();
+    app.utils.init();
+    app.time.init();
+    app.socket.init();
 
     //Initialize main
-    app.main.init();
+    app.game.init();
+
+    //Bind mouse events
+    app.keys.bindMouse();
 }
 
 window.onblur = function() {
-    app.main.togglePause(true);
+    // app.main.togglePause(true);
 }
 
 window.onfocus = function() {
-    app.main.togglePause(false);
+    // app.main.togglePause(false);
 }
 
-document.onmousemove = function(e) {
-    app.mouse = app.getMouse(e);
+/**
+ * Get a cross-browser viewport object with related size data
+ */
+app.getViewport = function() {
+    var ele = window,
+        pre = 'inner';
+    if (!('innerWidth' in window)) {
+        pre = 'client';
+        ele = document.documentElement || document.body;
+    }
+    //Width of window
+    return {
+        width: ele[pre + 'Width'],
+        //Height of window
+        height: ele[pre + 'Height'],
+        //View width css unit
+        vw: ele[pre + 'Width'] / 100.0,
+        //View Height css unit
+        vh: ele[pre + 'Height'] / 100.0
+    };
 }

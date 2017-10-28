@@ -2,21 +2,27 @@
 <html lang="en">
 <head>
     <meta charset="utf-8" />
-    <title>Boomshine - Daniel Timko</title>
-    <link rel="stylesheet" type="text/css" href="boomshine.css" />
-    <script type="text/javascript" src="./js/loader.js"></script>
-    <script type="text/javascript" src="./js/state.js"></script>
-    <script type="text/javascript" src="./js/utils.js"></script>
-    <script type="text/javascript" src="./js/particle.js"></script>
-    <script type="text/javascript" src="./js/audio.js"></script>
-    <script type="text/javascript" src="./js/keys.js"></script>
-    <script type="text/javascript" src="./js/time.js"></script>
-    <script type="text/javascript" src="./js/main.js"></script>
+    <title>Multiplayer Tag - Daniel Timko</title>
+    <link rel="stylesheet" type="text/css" href="/css/tag.css" />
+    <!-- Socket IO script -->
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/js/victor.js"></script>
+
+    <!-- Client initialization script -->
+    <script src="/client/js/loader.js"></script>
+
+    <!-- Shared JS -->
+    <script src="/js/time.js"></script>
+    <script src="/js/utils.js"></script>
+
+    <!-- Client-side JS -->
+    <script src="/client/js/keys.js"></script>
+    <script src="/client/js/state.js"></script>
+    <script src="/client/js/game.js"></script>
+    <script src="/client/js/socket.js"></script>
+
 </head>
 <body>
     <canvas id="canvas"></canvas>
-    <section id="audioControls">
-        <audio id="bgAudio" src="media/background.mp3" controls loop></audio>
-    </section>
 </body>
 </html>
