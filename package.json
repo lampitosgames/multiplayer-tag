@@ -1,22 +1,32 @@
 {
-  "name": "multiplayer-tag",
-  "version": "0.1.0",
-  "description": "A tag game with platforming and competition",
-  "main": "index.js",
-  "scripts": {
-    "test": "make test"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/lampitosgames/multiplayer-tag.git"
-  },
-  "keywords": [
-    "npm"
-  ],
-  "author": "Daniel Timko <det2948@rit.edu>",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/lampitosgames/multiplayer-tag/issues"
-  },
-  "homepage": "https://github.com/lampitosgames/multiplayer-tag#readme"
+    "name": "multiplayer-tag",
+    "version": "0.1.0",
+    "description": "A tag game with platforming and competition",
+    "main": "app/index.js",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/lampitosgames/multiplayer-tag.git"
+    },
+    "keywords": [
+        "npm"
+    ],
+    "scripts": {
+        "start": "nodemon app/index.js --exec babel-node",
+        "build": "babel app -d dist",
+        "serve": "node dist/index.js"
+    },
+    "author": "Daniel Timko <det2948@rit.edu>",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/lampitosgames/multiplayer-tag/issues"
+    },
+    "homepage": "https://github.com/lampitosgames/multiplayer-tag#readme",
+    "devDependencies": {
+        "babel-cli": "^6.26.0",
+        "babel-preset-env": "^1.6.1",
+        "nodemon": "^1.12.1"
+    },
+    "dependencies": {
+        "express": "^4.16.2"
+    }
 }
