@@ -16,6 +16,9 @@ app.state = (function() {
     let game = {
         //ID of the animation being used
         animationID: 0,
+        //Player ID of the client
+        clientID: undefined,
+        //Holds all player data
         players: {}
     };
 

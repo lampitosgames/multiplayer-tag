@@ -14,43 +14,34 @@ let server = http.Server(app);
 //Socket server
 let io = socketIO.listen(server);
 
+//Hook in the app router
 app.use(router);
 
-//Keep track of player ids
-server.lastPlayerID = 0;
-
+//On a new player connection
 io.on('connection', (socket) => {
-    socket.on('newplayer', () => {
-        socket.player = {
-            id: server.lastPlayerID,
-            x: utils.randomInt(100, 600),
-            y: utils.randomInt(100, 600)
-        };
-        server.lastPlayerID += 1;
-        socket.emit('allplayers', getAllPlayers());
-        socket.broadcast.emit('newplayer', socket.player);
+    //Bind createNewPlayer for when the cleint requests a player
+    socket.on('createNewPlayer', () => {
+        //Add a new player to the game and store the ID on this socket
+        socket.playerID = game.addNewPlayer(socket);
 
+        //Listen to player updates from the client
+        socket.on('updatePlayer', (data) => {
+            game.updatePlayerFromClient(socket, data);
+        });
+
+        //Only bind disconnect if the player was created in the first place
+        //Disconnect the player
         socket.on('disconnect', () => {
-            io.emit('remove', socket.player.id);
+            game.disconnectPlayer(socket.playerID);
         });
     });
 });
 
-let getAllPlayers = () => {
-    let players = [];
-    Object.keys(io.sockets.connected).forEach((socketID) => {
-        let player = io.sockets.connected[socketID].player;
-        if (player) {
-            players.push(player);
-        }
-    })
-    return players;
-}
-
-server.listen(8080, () => {
+//Start a server on port 8000
+server.listen(8000, () => {
     console.log("Server listening on " + server.address().port);
     //Initialize the game
-    game.init();
+    game.init(io);
     //Start the game loop
     game.update();
 });

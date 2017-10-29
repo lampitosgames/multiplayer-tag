@@ -1,6 +1,8 @@
+//Add a timestamp to the request
 let requestTime = (req, res, next) => {
     req.reqTime = Date.now();
     next();
 }
 
-export default [requestTime];
+//Export an array of middleware functions to be bound by the router
+export default[requestTime];

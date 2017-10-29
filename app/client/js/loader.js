@@ -12,6 +12,7 @@ window.onload = function() {
     app.utils.init();
     app.time.init();
     app.socket.init();
+    app.p.init();
 
     //Initialize main
     app.game.init();
