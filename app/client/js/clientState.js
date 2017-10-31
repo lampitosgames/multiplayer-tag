@@ -16,10 +16,18 @@ app.state = (function() {
     let game = {
         //ID of the animation being used
         animationID: 0,
+        //Game Unit.  32 pixels
+        gu: 32,
         //Player ID of the client
         clientID: undefined,
         //Holds all player data
         players: {}
+    };
+
+    let physics = {
+        lastRigidBodyID: 0,
+        gravity: 0,
+        rigidBodies: []
     };
 
     //Time module state
@@ -38,6 +46,7 @@ app.state = (function() {
     return {
         e: e,
         game: game,
+        physics: physics,
         time: time
     };
 }());

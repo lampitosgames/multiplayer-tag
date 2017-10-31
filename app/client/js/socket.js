@@ -3,7 +3,7 @@
 //The socket module handles most communication with the server
 app.socket = (function() {
     let a = app;
-    let s, sg;
+    let s, sg, sp;
 
     //A reference to the client's socket
     let socket = undefined;
@@ -15,6 +15,7 @@ app.socket = (function() {
         //Get shorthand state
         s = a.state;
         sg = s.game;
+        sp = s.physics;
 
         //Connect and get a new socket
         socket = io.connect();
@@ -23,14 +24,18 @@ app.socket = (function() {
         socket.on('newPlayer', function(data) {
             //Add the new player to the list
             sg.players[data.id] = new a.p.Player(data.id, data.x, data.y);
-            sg.players[data.id].vel = new Victor(data.velX, data.velY);
+            sg.players[data.id].setData(data);
         });
         //Listen for players leaving
         socket.on('removePlayer', function(id) {
+            sp.rigidBodies.splice(sp.rigidBodies.indexOf(sg.players[id].rigidBody), 1);
             delete sg.players[id];
         });
         //Listen for changes to individual players
         socket.on('updatePlayer', function(data) {
+            if (!sg.players[data.id]) {
+                sg.players[data.id] = new a.p.Player(data.id, data.x, data.y);
+            }
             sg.players[data.id].setData(data);
         });
 
@@ -44,8 +49,10 @@ app.socket = (function() {
         });
         socket.on('allPlayers', function(data) {
             for (const id in data) {
-                sg.players[id] = new a.p.Player(data[id].id, data[id].x, data[id].y);
-                sg.players[id].vel = new Victor(data[id].velX, data[id].velY);
+                if (!sg.players[id]) {
+                    sg.players[id] = new a.p.Player(data[id].id, data[id].x, data[id].y);
+                }
+                sg.players[id].setData(data[id]);
             }
         });
     }

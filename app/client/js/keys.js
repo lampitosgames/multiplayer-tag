@@ -56,6 +56,15 @@ app.keys = (function() {
         });
     }
 
+    function start() {
+        app.canvas.addEventListener('mousedown', function() {
+            mouseDown = true;
+        });
+        app.canvas.addEventListener('mouseup', function() {
+            mouseDown = false;
+        });
+    }
+
     /**
      * Bind a function to a key to be called when that key is pressed.
      * Accepts the char code or a string
@@ -176,22 +185,9 @@ app.keys = (function() {
         return keyCode;
     }
 
-    /**
-     * App-specific function that binds mouse clicks to the canvas so other
-     * modules can query it
-     */
-    function bindMouse() {
-        app.canvas.addEventListener('mousedown', function() {
-            mouseDown = true;
-        });
-        app.canvas.addEventListener('mouseup', function() {
-            mouseDown = false;
-        });
-    }
-
     return {
         init: init,
-        bindMouse: bindMouse,
+        start: start,
         keyUp: keyUp,
         keyDown: keyDown,
         pressed: pressed,

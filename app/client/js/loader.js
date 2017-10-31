@@ -13,12 +13,14 @@ window.onload = function() {
     app.time.init();
     app.socket.init();
     app.p.init();
+    app.physics.init();
+    app.physObj.init();
 
     //Initialize main
     app.game.init();
 
-    //Bind mouse events
-    app.keys.bindMouse();
+    //Start the game
+    app.game.start();
 }
 
 window.onblur = function() {

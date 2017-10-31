@@ -5,15 +5,21 @@
     //modules
     let Vector;
     let time;
+    let physics;
+
+    //State
+    let s, sp, sg;
 
     function init() {
         //Detect server/client and import other modules
         if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
             Vector = require('victor');
             time = require('./time');
+            physics = require('./physics/physics');
         } else {
             Vector = Victor;
             time = app.time;
+            physics = app.physics;
         }
     }
 
@@ -23,17 +29,15 @@
     function Player(_id, _x, _y) {
         //Store their ID
         this.id = _id;
-        //Set position and velocity
-        this.pos = new Vector(_x, _y);
-        this.vel = new Vector(0, 0);
+        //Create a rigid body for the player
+        this.rigidBody = physics.getRigidBody(_x, _y, 1, 1, 1.0);
+        this.collider = this.rigidBody.col;
 
         /**
          * Called every update.  Should be time independent
          */
         this.update = function() {
-            //Update position based on velocity
-            this.pos.x += this.vel.x * time.dt();
-            this.pos.y += this.vel.y * time.dt();
+
         }
 
         /**
@@ -42,10 +46,7 @@
         this.getData = function() {
             return {
                 id: this.id,
-                x: this.pos.x,
-                y: this.pos.y,
-                velX: this.vel.x,
-                velY: this.vel.y
+                rigidBody: this.rigidBody.getData()
             };
         }
 
@@ -53,10 +54,7 @@
          * Set player data based on updated information
          */
         this.setData = function(data) {
-            this.pos.x = data.x;
-            this.pos.y = data.y;
-            this.vel.x = data.velX;
-            this.vel.y = data.velY;
+            this.rigidBody.setData(data.rigidBody);
         }
     }
 

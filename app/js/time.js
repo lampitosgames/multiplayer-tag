@@ -44,10 +44,6 @@
         runTime += dt;
     }
 
-    function clamp(value, min, max) {
-        return Math.min(Math.max(value, Math.min(min, max)), Math.max(min, max));
-    }
-
     let _time = {
         calculateDeltaTime: calculateDeltaTime,
         update: update,

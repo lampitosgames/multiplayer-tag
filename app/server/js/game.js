@@ -4,10 +4,13 @@ import state from './serverState';
 import time from '../../js/time';
 import utils from '../../js/utils';
 import p from '../../js/player';
+import physics from '../../js/physics/physics';
+import physObj from '../../js/physics/physicsObjects';
 
 //Script globals
 let io;
 let players;
+let sp;
 
 /**
  * Used to initialize the game.  It initializes other modules and gets shorthand variables
@@ -16,10 +19,15 @@ let init = (_io) => {
     utils.init();
     time.init();
     p.init();
+    physics.init();
+    physObj.init();
     io = _io;
 
     //Store a shorthand reference to the players array
     players = state.game.players;
+    sp = state.physics;
+
+    physics.start();
 }
 
 /**
@@ -31,6 +39,7 @@ let update = () => {
     setTimeout(update, (1000 / 60));
     //Update other modules
     time.update();
+    physics.update();
 
     //Update all players
     for (const id in players) {
@@ -59,7 +68,8 @@ let addNewPlayer = (socket) => {
     let id = state.game.lastPlayerID++;
 
     //Create a new player object and store it in the array
-    players[id] = new p.Player(id, utils.randomInt(100, 600), utils.randomInt(100, 600));
+    players[id] = new p.Player(id, utils.randomInt(0, 10), utils.randomInt(0, 10));
+    players[id].rigidBody.hasGravity = true;
 
     //Get data for all players
     let playerData = {};
@@ -81,6 +91,8 @@ let addNewPlayer = (socket) => {
  * Function to disconnect a player from the server
  */
 let disconnectPlayer = (id) => {
+    //Remove the player's rigid body
+    sp.rigidBodies.splice(sp.rigidBodies.indexOf(players[id].rigidBody), 1);
     //Remove the player's data in the player array
     delete players[id];
     //Emit that a player disconnected
