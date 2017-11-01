@@ -28,6 +28,7 @@
         this.pos = new Vector(_x, _y);
         this.width = _width;
         this.height = _height;
+        this.solid = true;
         giveCollisionHelpers.bind(this)();
     }
 
@@ -43,8 +44,10 @@
         this.height = _height;
 
         //Physics properties
+        this.shouldGetGravity = true;
         this.hasGravity = false;
         this.hasCollisions = true;
+        this.solid = true;
 
         this.update = function() {
             //Add acceleration to the velocity scaled by dt
@@ -54,6 +57,7 @@
 
             //Reset acceleration
             this.accel = new Vector(0.0, 0.0);
+            this.shouldGetGravity = true;
         }
 
         this.applyGravity = function(grav) {
@@ -65,11 +69,9 @@
         this.applyPlatformCollision = function(platforms) {
             if (!this.hasCollisions) {
                 //Object can't collide, so it is not colliding
-                return false;
+                this.shouldGetGravity = true;
+                return;
             }
-            //Not colliding until proven otherwise
-            let isColliding = false;
-
             //Loop through all platforms
             for (let k=0; k<platforms.length; k++) {
                 let plat = platforms[k];
@@ -81,31 +83,31 @@
                 }
 
                 //Collision is to the left
-                if (m.norm.x < 0) {
+                if (m.norm.x < 0 && plat.solid) {
                     this.vel.x = 0;
                     this.xMin(plat.xMax());
-                    isColliding = true;
                 }
                 //Collision is to the right
-                if (m.norm.x > 0) {
+                if (m.norm.x > 0 && plat.solid) {
                     this.vel.x = 0;
                     this.xMax(plat.xMin());
-                    isColliding = true;
                 }
                 //Collision is to the top
-                if (m.norm.y < 0) {
+                if (m.norm.y < 0 && plat.solid) {
                     this.vel.y = 0;
                     this.yMin(plat.yMax());
-                    isColliding = true;
                 }
                 //Collision is to the bottom
                 if (m.norm.y > 0) {
+                    //If the player is moving up and the platform isn't solid, don't apply the collision
+                    if (this.vel.y < 0 && !plat.solid) {
+                        continue;
+                    }
                     this.vel.y = 0;
                     this.yMax(plat.yMin());
-                    isColliding = true;
+                    this.shouldGetGravity = false;
                 }
             }
-            return isColliding;
         }
 
         /*

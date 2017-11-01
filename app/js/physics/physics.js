@@ -40,6 +40,8 @@
     function start() {
         //Create a floor
         getPlatform(0, 20, 40, 1);
+        let notSolid = getPlatform(10, 17, 10, 1);
+        notSolid.solid = false;
     }
 
     function update() {
@@ -47,10 +49,13 @@
         for (const goID in sp.gameObjects) {
             let obj = sp.gameObjects[goID];
 
-            let colliding = obj.applyPlatformCollision(sp.platforms);
-            if (!colliding) {
+            //Apply collisions and all things that might keep the player in the air
+            obj.applyPlatformCollision(sp.platforms);
+            //If the player shoud get gravity, apply it.  Collisions can disable gravity for a frame
+            if (obj.shouldGetGravity) {
                 obj.applyGravity(sp.gravity);
             }
+            //Update the object
             obj.update();
         }
     }
