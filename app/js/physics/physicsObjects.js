@@ -49,9 +49,19 @@
         this.hasCollisions = true;
         this.solid = true;
 
+        //Movement tracking
+        this.jump = 0;
+        this.applyJump = false;
+
         this.update = function() {
             //Add acceleration to the velocity scaled by dt
             this.vel.add(this.accel.multiplyScalar(time.dt()));
+            //If jumping
+            if (this.applyJump == true) {
+                this.vel.add(sp.jumpVel);
+                this.applyJump = false;
+                this.jump++;
+            }
             //Add velocity to the position scaled by dt
             this.pos.add(this.vel.clone().multiplyScalar(time.dt()));
 
@@ -106,6 +116,7 @@
                     this.vel.y = 0;
                     this.yMax(plat.yMin());
                     this.shouldGetGravity = false;
+                    this.jump = 0;
                 }
             }
         }

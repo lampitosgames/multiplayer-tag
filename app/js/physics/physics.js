@@ -39,8 +39,8 @@
         // a = 2d / t^2
         // d = jump height = 6gu
         // t = time to apex = 0.5s
-        sp.jumpHeight = 6;
-        sp.jumpTime = 0.44;
+        sp.jumpHeight = 4;
+        sp.jumpTime = 0.3;
         sp.gravity = new Vector(0.0, (2.0*sp.jumpHeight)/(sp.jumpTime*sp.jumpTime));
 
         //Jump velocity
@@ -62,14 +62,14 @@
         for (const goID in sp.gameObjects) {
             let obj = sp.gameObjects[goID];
 
+            //Update the object
+            obj.update();
             //Apply collisions and all things that might keep the player in the air
             obj.applyPlatformCollision(sp.platforms);
             //If the player shoud get gravity, apply it.  Collisions can disable gravity for a frame
             if (obj.shouldGetGravity) {
                 obj.applyGravity(sp.gravity);
             }
-            //Update the object
-            obj.update();
         }
     }
 
@@ -102,6 +102,7 @@
 
         //Center to corner
         let ctc1 = col1.centerToCorner();
+        ctc1.y += 0.01;
         let ctc2 = col2.centerToCorner();
 
         //Vector from the center of 1 to the center of 2
