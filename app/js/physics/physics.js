@@ -34,14 +34,27 @@
 
         sp = state.physics;
 
-        sp.gravity = new Vector(0.0, 41);
+
+        //Acceleration due to gravity
+        // a = 2d / t^2
+        // d = jump height = 6gu
+        // t = time to apex = 0.5s
+        sp.jumpHeight = 6;
+        sp.jumpTime = 0.44;
+        sp.gravity = new Vector(0.0, (2.0*sp.jumpHeight)/(sp.jumpTime*sp.jumpTime));
+
+        //Jump velocity
+        // v = -sqrt(2*a*d)
+        // a = sp.gravity
+        // d = jump height
+        sp.jumpVel = new Vector(0.0, -Math.sqrt(2*sp.gravity.y*sp.jumpHeight));
     }
 
     function start() {
         //Create a floor
         getPlatform(0, 20, 40, 1);
         let notSolid = getPlatform(10, 17, 10, 1);
-        notSolid.solid = false;
+        // notSolid.solid = false;
     }
 
     function update() {
@@ -60,11 +73,18 @@
         }
     }
 
+    /**
+     * Create a new game object, add it to the global gameObjects list, and return it
+     */
     function getGameObject(_x, _y, _width, _height, _vel = new Vector(0.0, 0.0)) {
         let go = new GameObject(_x, _y, _width, _height, _vel);
         sp.gameObjects[go.id] = go;
         return go;
     }
+
+    /**
+     * Create a new platform, add it to the global platform array, and return it
+     */
     function getPlatform(_x, _y, _width, _height) {
         let plat = new Platform(_x, _y, _width, _height);
         sp.platforms.push(plat);
@@ -122,6 +142,7 @@
         start: start,
         update: update,
         getGameObject: getGameObject,
+        getPlatform: getPlatform,
         AABB: AABB
     };
 

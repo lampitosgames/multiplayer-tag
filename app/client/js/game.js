@@ -37,7 +37,9 @@ app.game = (function() {
 
         a.keys.keyDown("space", function() {
             let me = sg.players[sg.clientID];
-            me.gameObject.vel.y -= 18;
+            console.dir('test');
+            me.gameObject.vel.add(sp.jumpVel);
+            console.dir(me.gameObject.vel);
             a.socket.updateClientPlayer();
         });
 

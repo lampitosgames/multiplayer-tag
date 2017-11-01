@@ -27,7 +27,10 @@ app.state = (function() {
     let physics = {
         lastGameObjectID: 0,
         lastPlatformID: 0,
-        gravity: 0,
+        jumpHeight: 0,
+        jumpTime: 0,
+        gravity: undefined,
+        jumpVel: undefined,
         platforms:[],
         gameObjects: {}
     };
