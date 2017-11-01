@@ -5,7 +5,7 @@ app.ctx = undefined;
 
 app.game = (function() {
     let a = app;
-    let s, sg, se, st;
+    let s, sg, se, st, sp;
 
     /**
      * Initialization
@@ -16,6 +16,7 @@ app.game = (function() {
         sg = s.game;
         se = s.e;
         st = s.time;
+        sp = s.physics;
 
         //Store the canvas element
         a.canvas = document.getElementById("canvas");
@@ -36,8 +37,7 @@ app.game = (function() {
 
         a.keys.keyDown("space", function() {
             let me = sg.players[sg.clientID];
-            console.dir("test");
-            me.rigidBody.vel.y -= 18;
+            me.gameObject.vel.y -= 18;
             a.socket.updateClientPlayer();
         });
 
@@ -75,7 +75,12 @@ app.game = (function() {
             let player = sg.players[p];
             player.update();
             c.fillStyle = "red";
-            c.fillRect(player.collider.pos.x * sg.gu, player.collider.pos.y * sg.gu, player.collider.width * sg.gu, player.collider.height * sg.gu);
+            c.fillRect(player.gameObject.pos.x * sg.gu, player.gameObject.pos.y * sg.gu, player.gameObject.width * sg.gu, player.gameObject.height * sg.gu);
+        }
+
+        for (let i=0; i<sp.platforms.length; i++) {
+            let col = sp.platforms[i];
+            c.fillRect(col.xMin() * sg.gu, col.yMin() * sg.gu, col.width * sg.gu, col.height * sg.gu);
         }
     }
 
@@ -98,9 +103,9 @@ app.game = (function() {
         //Ensure the player has been created
         if (typeof(me) == 'undefined') { return; }
         //If the velocity changed
-        if (newVel.x != me.rigidBody.vel.x || newVel.y != me.rigidBody.vel.y) {
+        if (newVel.x != me.gameObject.vel.x || newVel.y != me.gameObject.vel.y) {
             //Update it and tell the server
-            me.rigidBody.vel.x = newVel.x;
+            me.gameObject.vel.x = newVel.x;
             a.socket.updateClientPlayer();
         }
     }

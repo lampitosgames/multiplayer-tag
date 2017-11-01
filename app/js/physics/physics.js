@@ -8,7 +8,7 @@
     let state;
     let sp;
     let Vector;
-    let Collider, Manifold, RigidBody;
+    let Manifold, GameObject, Platform;
 
     function init() {
         //Detect server/client and import other modules
@@ -18,18 +18,18 @@
             state = require('../../server/js/serverState');
 
             Vector = require('victor');
-            Collider = require('./physicsObjects').Collider;
             Manifold = require('./physicsObjects').Manifold;
-            RigidBody = require('./physicsObjects').RigidBody;
+            GameObject = require('./physicsObjects').GameObject;
+            Platform = require('./physicsObjects').Platform;
         } else {
             utils = app.utils;
             time = app.time;
             state = app.state;
 
             Vector = Victor;
-            Collider = app.physObj.Collider;
             Manifold = app.physObj.Manifold;
-            RigidBody = app.physObj.RigidBody;
+            GameObject = app.physObj.GameObject;
+            Platform = app.physObj.Platform;
         }
 
         sp = state.physics;
@@ -39,66 +39,31 @@
 
     function start() {
         //Create a floor
-        getRigidBody(0, 20, 40, 1, 0.0, undefined, 1.0);
+        getPlatform(0, 20, 40, 1);
     }
 
     function update() {
-        //Update rigidBodies
-        for (let i=0; i<sp.rigidBodies.length; i++) {
-            let body1 = sp.rigidBodies[i];
+        //Update gameObjects
+        for (const goID in sp.gameObjects) {
+            let obj = sp.gameObjects[goID];
 
-            body1.applyGravity(sp.gravity);
-            body1.update();
-
-            //Check collisions
-            for (let k=i+1; k<sp.rigidBodies.length; k++) {
-                let body2 = sp.rigidBodies[k];
-                //If either has collisions disabled
-                if (!body1.hasCollisions || !body2.hasCollisions) {
-                    continue;
-                }
-                //Check the collision
-                let m = AABB(body1.col, body2.col);
-                //If they are not colliding, continue
-                if (m.norm.length() < 1.0) {
-                    continue;
-                }
-
-                //TODO: Make simpler physics
-
-                // //Get relative velocity
-                // let rv = body2.vel.clone().subtract(body1.vel);
-                // //Get relative velocity along collision normal
-                // let vAlongNorm = rv.dot(m.norm);
-                // //If the velocities will already separate the objects, do nothing
-                // if (vAlongNorm > 0.0) { continue; }
-                // //Use whichever restitution is smaller
-                // let e = Math.min(body1.restitution, body2.restitution);
-                // //Get the impulse of the collision
-                // let j = -(1.0 + e) * vAlongNorm;
-                // let impulse = m.norm.clone().multiplyScalar(j);
-                //
-                // //Apply impulse to the objects
-                // body1.vel.subtract(impulse.clone().multiplyScalar(body1.invMass()));
-                // body2.vel.add(impulse.clone().multiplyScalar(body2.invMass()));
-                //
-                // //Positional correction (shift the objects away from the collision)
-                // let correction = m.norm.clone().multiplyScalar(m.penetration);
-                // //Apply to both objects
-                // if (body1.mass != 0) {
-                //     body1.pos.subtract(correction.clone());
-                // }
-                // if (body2.mass != 0) {
-                //     body2.pos.add(correction.clone());
-                // }
+            let colliding = obj.applyPlatformCollision(sp.platforms);
+            if (!colliding) {
+                obj.applyGravity(sp.gravity);
             }
+            obj.update();
         }
     }
 
-    function getRigidBody(_x, _y, _width, _height, _mass = 1.0, _vel = new Vector(0.0, 0.0), _restitution = 0.0) {
-        let rb = new RigidBody(_x, _y, _width, _height, _mass, _vel, _restitution);
-        sp.rigidBodies.push(rb);
-        return rb;
+    function getGameObject(_x, _y, _width, _height, _vel = new Vector(0.0, 0.0)) {
+        let go = new GameObject(_x, _y, _width, _height, _vel);
+        sp.gameObjects[go.id] = go;
+        return go;
+    }
+    function getPlatform(_x, _y, _width, _height) {
+        let plat = new Platform(_x, _y, _width, _height);
+        sp.platforms.push(plat);
+        return plat;
     }
 
     //Run AABB algorithm on two colliders and return the collision manifold
@@ -151,7 +116,7 @@
         init: init,
         start: start,
         update: update,
-        getRigidBody: getRigidBody,
+        getGameObject: getGameObject,
         AABB: AABB
     };
 

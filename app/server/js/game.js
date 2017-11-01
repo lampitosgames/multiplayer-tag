@@ -69,7 +69,7 @@ let addNewPlayer = (socket) => {
 
     //Create a new player object and store it in the array
     players[id] = new p.Player(id, utils.randomInt(0, 10), utils.randomInt(0, 10));
-    players[id].rigidBody.hasGravity = true;
+    players[id].gameObject.hasGravity = true;
 
     //Get data for all players
     let playerData = {};
@@ -91,8 +91,8 @@ let addNewPlayer = (socket) => {
  * Function to disconnect a player from the server
  */
 let disconnectPlayer = (id) => {
-    //Remove the player's rigid body
-    sp.rigidBodies.splice(sp.rigidBodies.indexOf(players[id].rigidBody), 1);
+    //Remove the player's Game Object
+    delete sp.gameObjects[players[id].gameObject.id];
     //Remove the player's data in the player array
     delete players[id];
     //Emit that a player disconnected

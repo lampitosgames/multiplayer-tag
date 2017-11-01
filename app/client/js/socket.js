@@ -28,7 +28,7 @@ app.socket = (function() {
         });
         //Listen for players leaving
         socket.on('removePlayer', function(id) {
-            sp.rigidBodies.splice(sp.rigidBodies.indexOf(sg.players[id].rigidBody), 1);
+            delete sp.gameObjects[sg.players[id].gameObject.id];
             delete sg.players[id];
         });
         //Listen for changes to individual players

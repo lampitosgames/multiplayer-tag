@@ -30,8 +30,7 @@
         //Store their ID
         this.id = _id;
         //Create a rigid body for the player
-        this.rigidBody = physics.getRigidBody(_x, _y, 1, 1, 1.0);
-        this.collider = this.rigidBody.col;
+        this.gameObject = physics.getGameObject(_x, _y, 1, 1);
 
         /**
          * Called every update.  Should be time independent
@@ -46,7 +45,7 @@
         this.getData = function() {
             return {
                 id: this.id,
-                rigidBody: this.rigidBody.getData()
+                gameObject: this.gameObject.getData()
             };
         }
 
@@ -54,7 +53,7 @@
          * Set player data based on updated information
          */
         this.setData = function(data) {
-            this.rigidBody.setData(data.rigidBody);
+            this.gameObject.setData(data.gameObject);
         }
     }
 

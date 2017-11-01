@@ -25,9 +25,11 @@ app.state = (function() {
     };
 
     let physics = {
-        lastRigidBodyID: 0,
+        lastGameObjectID: 0,
+        lastPlatformID: 0,
         gravity: 0,
-        rigidBodies: []
+        platforms:[],
+        gameObjects: {}
     };
 
     //Time module state
