@@ -51,17 +51,10 @@
 
         //Movement tracking
         this.jump = 0;
-        this.applyJump = false;
 
         this.update = function() {
             //Add acceleration to the velocity scaled by dt
             this.vel.add(this.accel.multiplyScalar(time.dt()));
-            //If jumping
-            if (this.applyJump == true) {
-                this.vel.add(sp.jumpVel);
-                this.applyJump = false;
-                this.jump++;
-            }
             //Add velocity to the position scaled by dt
             this.pos.add(this.vel.clone().multiplyScalar(time.dt()));
 
@@ -139,7 +132,8 @@
                 width: this.width,
                 height: this.height,
                 hasGravity: this.hasGravity,
-                hasCollisions: this.hasCollisions
+                hasCollisions: this.hasCollisions,
+                jump: this.jump
             }
         }
         this.setData = function(data) {
@@ -152,6 +146,7 @@
             this.height = data.height;
             this.hasGravity = data.hasGravity;
             this.hasCollisions = data.hasCollisions;
+            this.jump = data.jump;
         }
     }
 

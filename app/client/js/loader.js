@@ -15,6 +15,7 @@ window.onload = function() {
     app.p.init();
     app.physics.init();
     app.physObj.init();
+    app.playerUpdates.init();
 
     //Initialize main
     app.game.init();

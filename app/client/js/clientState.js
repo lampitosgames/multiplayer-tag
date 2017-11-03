@@ -35,6 +35,13 @@ app.state = (function() {
         gameObjects: {}
     };
 
+    let player = {
+        shouldUpdateServer: false,
+        moveLeft: false,
+        moveRight: false,
+        shouldJump: false
+    };
+
     //Time module state
     let time = {
         //Delta time
@@ -52,6 +59,7 @@ app.state = (function() {
         e: e,
         game: game,
         physics: physics,
+        player: player,
         time: time
     };
 }());
