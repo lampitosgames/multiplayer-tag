@@ -56,9 +56,9 @@
 
     function start() {
         //Create a floor
-        getPlatform(0, 20, 40, 1);
-        let notSolid = getPlatform(10, 17, 10, 1);
-        notSolid.solid = false;
+        // getPlatform(0, 20, 40, 1);
+        // let notSolid = getPlatform(10, 17, 10, 1);
+        // notSolid.solid = false;
     }
 
     function update() {

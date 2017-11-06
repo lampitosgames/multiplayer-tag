@@ -17,7 +17,7 @@ app.state = (function() {
         //ID of the animation being used
         animationID: 0,
         //Game Unit.  32 pixels
-        gu: 32,
+        gu: 38,
         //Player ID of the client
         clientID: undefined,
         //Holds all player data

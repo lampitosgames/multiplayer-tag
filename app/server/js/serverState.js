@@ -2,7 +2,7 @@
 let game = {
     lastPlayerID: 0,
     //Game Unit.  32 pixels
-    gu: 32,
+    gu: 38,
     players: {}
 };
 

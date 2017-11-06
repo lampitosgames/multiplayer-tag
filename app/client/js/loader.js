@@ -11,11 +11,13 @@ window.onload = function() {
     app.keys.init();
     app.utils.init();
     app.time.init();
+    app.image.init();
     app.socket.init();
     app.p.init();
     app.physics.init();
     app.physObj.init();
     app.playerUpdates.init();
+    app.levelLoader.init();
 
     //Initialize main
     app.game.init();

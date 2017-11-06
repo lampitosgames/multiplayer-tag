@@ -35,6 +35,8 @@ app.game = (function() {
         //Start the keys module
         a.keys.start();
 
+        a.levelLoader.start();
+
         //Start the update loop
         update();
     }
@@ -59,6 +61,8 @@ app.game = (function() {
         c.fillStyle = "white";
         c.fillRect(0, 0, a.viewport.width, a.viewport.height);
 
+        a.image.draw();
+
         //Draw all players
         for (const p in sg.players) {
             let player = sg.players[p];
@@ -67,10 +71,10 @@ app.game = (function() {
             c.fillRect(player.gameObject.pos.x * sg.gu, player.gameObject.pos.y * sg.gu, player.gameObject.width * sg.gu, player.gameObject.height * sg.gu);
         }
 
-        for (let i=0; i<sp.platforms.length; i++) {
-            let col = sp.platforms[i];
-            c.fillRect(col.xMin() * sg.gu, col.yMin() * sg.gu, col.width * sg.gu, col.height * sg.gu);
-        }
+        // for (let i=0; i<sp.platforms.length; i++) {
+        //     let col = sp.platforms[i];
+        //     c.fillRect(col.xMin() * sg.gu, col.yMin() * sg.gu, col.width * sg.gu, col.height * sg.gu);
+        // }
     }
 
     /**

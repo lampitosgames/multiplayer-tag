@@ -7,6 +7,8 @@ import p from '../../js/player';
 import physics from '../../js/physics/physics';
 import physObj from '../../js/physics/physicsObjects';
 
+import levelLoader from '../../js/levelLoader';
+
 //Script globals
 let io;
 let players;
@@ -21,6 +23,7 @@ let init = (_io) => {
     p.init();
     physics.init();
     physObj.init();
+    levelLoader.init();
     io = _io;
 
     //Store a shorthand reference to the players array
@@ -29,6 +32,7 @@ let init = (_io) => {
     st = state.time;
 
     physics.start();
+    levelLoader.start();
 }
 
 /**
