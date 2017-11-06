@@ -43,5 +43,6 @@ server.listen(8000, () => {
     //Initialize the game
     game.init(io);
     //Start the game loop
-    game.update();
+    game.updateGame();
+    game.updateNetwork();
 });

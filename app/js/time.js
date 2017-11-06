@@ -4,20 +4,18 @@
 (function() {
     //Modules
     let utils;
-
-    //Member vars
-    let fps = 60;
-    let runTime = 0;
-    let lastTime = 0;
-    let dt = 0;
+    let s, st;
 
     function init() {
         //Detect server/client and import other modules
         if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
             utils = require('./utils.js');
+            s = require('../server/js/serverState');
         } else {
             utils = app.utils;
+            s = app.state;
         }
+        st = s.time;
     }
 
     /**
@@ -27,11 +25,11 @@
         //Get time in ms
         let now = Date.now();
         //Get capped instant FPS (from last frame to this frame)
-        fps = utils.clamp(1000 / (now - lastTime), 5, 60);
+        st.fps = utils.clamp(1000 / (now - st.lastTime), 5, 60);
         //Store this frame time
-        lastTime = now;
+        st.lastTime = now;
         //Return the last frame's time (delta time) in seconds
-        return 1 / fps;
+        return 1 / st.fps;
     }
 
     /**
@@ -39,23 +37,32 @@
      */
     function update() {
         //Get the delta time
-        dt = calculateDeltaTime();
+        st.dt = calculateDeltaTime();
         //Add the delta to the total runtime
-        runTime += dt;
+        st.runTime += st.dt;
+        //Add the delta to individual Timers
+        for (const t in st.clientTimers) {
+            st.clientTimers[t] += st.dt;
+        }
+    }
+
+    function startClientTimer(_id, _serverTime) {
+        st.clientTimers[_id] = _serverTime;
     }
 
     let _time = {
         calculateDeltaTime: calculateDeltaTime,
+        startClientTimer: startClientTimer,
         update: update,
         init: init,
         dt: function() {
-            return dt;
+            return st.dt;
         },
         runTime: function() {
-            return runTime;
+            return st.runTime;
         },
         fps: function() {
-            return fps;
+            return st.fps;
         }
     };
 

@@ -8,7 +8,7 @@
     let physics;
 
     //State
-    let s, sp, sg;
+    let s, sp, sg, st;
 
     function init() {
         //Detect server/client and import other modules
@@ -25,6 +25,7 @@
         }
         sp = s.physics;
         sg = s.game;
+        st = s.time;
     }
 
     /**
@@ -39,6 +40,7 @@
         //Init player input.  Everything is false by default
         this.moveLeft = false;
         this.moveRight = false;
+        this.sprint = false;
         this.shouldJump = false;
         this.jump = 0;
 
@@ -49,11 +51,11 @@
             //If moving left
             this.gameObject.vel.x = 0;
             if (this.moveLeft) {
-                this.gameObject.vel.add(new Vector(-10, 0.0));
+                this.gameObject.vel.add(new Vector(this.sprint ? -sp.moveSpeed * sp.sprintMult : -sp.moveSpeed, 0.0));
             }
             //If moving right
             if (this.moveRight) {
-                this.gameObject.vel.add(new Vector(10, 0.0));
+                this.gameObject.vel.add(new Vector(this.sprint ? sp.moveSpeed * sp.sprintMult : sp.moveSpeed, 0.0));
             }
             //If jumping
             if (this.shouldJump == true) {
@@ -69,8 +71,10 @@
         this.getData = function() {
             return {
                 id: this.id,
+                time: st.clientTimers[this.id],
                 moveLeft: this.moveLeft,
                 moveRight: this.moveRight,
+                sprint: this.sprint,
                 shouldJump: this.shouldJump,
                 gameObject: this.gameObject.getData()
             };
@@ -81,9 +85,15 @@
          */
         this.setData = function(data) {
             this.moveLeft = data.moveLeft;
-            this.moveright = data.moveRight;
+            this.moveRight = data.moveRight;
+            this.sprint = data.sprint;
             this.shouldJump = data.shouldJump;
-            this.gameObject.setData(data.gameObject);
+
+            let timer = st.clientTimers[data.id];
+
+            this.gameObject.setData(data.gameObject, timer - data.time);
+
+            st.clientTimers[data.id] = data.time;
         }
     }
 

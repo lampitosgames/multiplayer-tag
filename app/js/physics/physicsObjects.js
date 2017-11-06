@@ -51,10 +51,11 @@
 
         //Movement tracking
         this.jump = 0;
+        this.drop = false;
 
         this.update = function() {
-            //Add acceleration to the velocity scaled by dt
-            this.vel.add(this.accel.multiplyScalar(time.dt()));
+            //Add acceleration to the velocity scaled by dt.  Limit the velocity so collisions don't break
+            this.vel.add(this.accel.multiplyScalar(time.dt())).limit(sp.speedLimit, 0.75);
             //Add velocity to the position scaled by dt
             this.pos.add(this.vel.clone().multiplyScalar(time.dt()));
 
@@ -106,6 +107,10 @@
                     if (this.vel.y < 0 && !plat.solid) {
                         continue;
                     }
+                    //If the platform is not solid and the player is dropping, don't apply collision
+                    if (this.drop && !plat.solid) {
+                        continue;
+                    }
                     this.vel.y = 0;
                     this.yMax(plat.yMin());
                     this.shouldGetGravity = false;
@@ -133,13 +138,21 @@
                 height: this.height,
                 hasGravity: this.hasGravity,
                 hasCollisions: this.hasCollisions,
-                jump: this.jump
+                jump: this.jump,
+                drop: this.drop
             }
         }
-        this.setData = function(data) {
+        this.setData = function(data, timeDelta = 0) {
             this.id = data.id;
-            this.pos.x = data.x;
-            this.pos.y = data.y;
+            //Calculate new pos based on latency
+            let newPos = Vector(data.x + data.velX*timeDelta, data.y + data.velY*timeDelta);
+            //If the changed distance is less than 1gu, lerp it
+            if (newPos.distanceSq(this.pos) < 1) {
+                this.pos = new Vector(data.x + data.velX*timeDelta, data.y + data.velY*timeDelta).mix(this.pos, 0.5);
+            //Otherwise, just set the position
+            } else {
+                this.pos = newPos;
+            }
             this.vel.x = data.velX;
             this.vel.y = data.velY;
             this.width = data.width;
@@ -147,6 +160,7 @@
             this.hasGravity = data.hasGravity;
             this.hasCollisions = data.hasCollisions;
             this.jump = data.jump;
+            this.drop = data.drop;
         }
     }
 

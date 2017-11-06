@@ -3,7 +3,7 @@
 //The socket module handles most communication with the server
 app.socket = (function() {
     let a = app;
-    let s, sg, sp;
+    let s, sg, sp, st;
 
     //A reference to the client's socket
     let socket = undefined;
@@ -16,6 +16,7 @@ app.socket = (function() {
         s = a.state;
         sg = s.game;
         sp = s.physics;
+        st = s.time;
 
         //Connect and get a new socket
         socket = io.connect();
@@ -24,19 +25,14 @@ app.socket = (function() {
         socket.on('newPlayer', function(data) {
             //Add the new player to the list
             sg.players[data.id] = new a.p.Player(data.id, data.x, data.y);
+            a.time.startClientTimer(data.id, data.time);
             sg.players[data.id].setData(data);
         });
         //Listen for players leaving
         socket.on('removePlayer', function(id) {
             delete sp.gameObjects[sg.players[id].gameObject.id];
+            delete st.clientTimers[sg.players[id]];
             delete sg.players[id];
-        });
-        //Listen for changes to individual players
-        socket.on('updatePlayer', function(data) {
-            if (!sg.players[data.id]) {
-                sg.players[data.id] = new a.p.Player(data.id, data.x, data.y);
-            }
-            sg.players[data.id].setData(data);
         });
 
 
@@ -47,12 +43,17 @@ app.socket = (function() {
         socket.on('setClientID', function(id) {
             sg.clientID = id;
         });
+
         socket.on('allPlayers', function(data) {
             for (const id in data) {
                 if (!sg.players[id]) {
                     sg.players[id] = new a.p.Player(data[id].id, data[id].x, data[id].y);
                 }
-                sg.players[id].setData(data[id]);
+                if (sg.clientID != id) {
+                    sg.players[id].setData(data[id]);
+                } else if (!s.player.shouldUpdateServer) {
+                    sg.players[id].setData(data[id]);
+                }
             }
         });
     }
@@ -61,7 +62,10 @@ app.socket = (function() {
      * Called by the client to update the server (and everyone else) of changes
      */
     function updateClientPlayer() {
-        socket.emit('updatePlayer', sg.players[sg.clientID].getData());
+        let playerData = sg.players[sg.clientID].getData();
+        playerData.time = st.clientTimers[sg.clientID];
+
+        socket.emit('updatePlayer', playerData);
     }
 
     /**

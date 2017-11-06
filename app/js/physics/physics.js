@@ -34,6 +34,7 @@
 
         sp = state.physics;
 
+        sp.speedLimit = 75;
 
         //Acceleration due to gravity
         // a = 2d / t^2
@@ -48,13 +49,16 @@
         // a = sp.gravity
         // d = jump height
         sp.jumpVel = new Vector(0.0, -Math.sqrt(2*sp.gravity.y*sp.jumpHeight));
+
+        sp.moveSpeed = 10;
+        sp.sprintMult = 2;
     }
 
     function start() {
         //Create a floor
         getPlatform(0, 20, 40, 1);
         let notSolid = getPlatform(10, 17, 10, 1);
-        // notSolid.solid = false;
+        notSolid.solid = false;
     }
 
     function update() {

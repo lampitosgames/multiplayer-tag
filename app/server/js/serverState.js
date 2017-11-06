@@ -9,17 +9,35 @@ let game = {
 let physics = {
     lastGameObjectID: 0,
     lastPlatformID: 0,
+    speedLimit: 0,
     jumpHeight: 0,
     jumpTime: 0,
     gravity: undefined,
     jumpVel: undefined,
+    moveSpeed: undefined,
+    sprintMult: undefined,
     platforms: [],
     gameObjects: {}
 }
 
+//Time module state
+let time = {
+    //Delta time
+    dt: 0,
+    //Total time the app has been running
+    runTime: 0,
+    //Timestamp of the last update loop
+    lastTime: 0,
+    //Current frames per second
+    fps: 0,
+    //Timers for individual clients so that syncing can happen properly
+    clientTimers: {}
+};
+
 let _state = {
     game: game,
-    physics: physics
+    physics: physics,
+    time: time
 };
 
 module.exports = _state;

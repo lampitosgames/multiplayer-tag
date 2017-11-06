@@ -70,18 +70,21 @@ app.keys = (function() {
      * Accepts the char code or a string
      */
     function keyDown(key, callback) {
-        //Get the key code
-        let keyCode = getKeyCode(key);
-        //If data does not exist for this key, create it
-        if (typeof(keys[keyCode]) === "undefined") {
-            keys[keyCode] = {
-                pressed: false,
-                keyDown: [],
-                keyUp: []
-            };
+        //Loop through every argument and add the callback to it
+        for (let i=0; i<arguments.length-1; i++) {
+            //Get the key code
+            let keyCode = getKeyCode(arguments[i]);
+            //If data does not exist for this key, create it
+            if (typeof(keys[keyCode]) === "undefined") {
+                keys[keyCode] = {
+                    pressed: false,
+                    keyDown: [],
+                    keyUp: []
+                };
+            }
+            //Push the callback function to the array
+            keys[keyCode].keyDown.push(arguments[arguments.length-1]);
         }
-        //Push the callback function to the array
-        keys[keyCode].keyDown.push(callback);
     }
 
     /**
@@ -89,18 +92,21 @@ app.keys = (function() {
      * Accepts the char code or a string
      */
     function keyUp(key, callback) {
-        //Get the key code
-        let keyCode = getKeyCode(key);
-        //If data does not exist for this key, create it
-        if (typeof(keys[keyCode]) === "undefined") {
-            keys[keyCode] = {
-                pressed: false,
-                keyDown: [],
-                keyUp: []
-            };
+        //Loop through every argument and add the callback to it
+        for (let i=0; i<arguments.length-1; i++) {
+            //Get the key code
+            let keyCode = getKeyCode(arguments[i]);
+            //If data does not exist for this key, create it
+            if (typeof(keys[keyCode]) === "undefined") {
+                keys[keyCode] = {
+                    pressed: false,
+                    keyDown: [],
+                    keyUp: []
+                };
+            }
+            //Push the callback function to the array
+            keys[keyCode].keyUp.push(arguments[arguments.length-1]);
         }
-        //Push the callback function to the array
-        keys[keyCode].keyUp.push(callback);
     }
 
     /**

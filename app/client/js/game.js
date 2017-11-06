@@ -35,14 +35,6 @@ app.game = (function() {
         //Start the keys module
         a.keys.start();
 
-        a.keys.keyDown("space", function() {
-            let me = sg.players[sg.clientID];
-            if (me.gameObject.jump < 2) {
-                me.gameObject.applyJump = true;
-            }
-            a.socket.updateClientPlayer();
-        });
-
         //Start the update loop
         update();
     }
@@ -58,12 +50,16 @@ app.game = (function() {
         a.physics.update();
         a.playerUpdates.update();
 
+        //Update all players
+        for (const p in sg.players) {
+        }
+
         //Re-draw the background
         let c = a.ctx;
         c.fillStyle = "white";
         c.fillRect(0, 0, a.viewport.width, a.viewport.height);
 
-        //Update and draw all players
+        //Draw all players
         for (const p in sg.players) {
             let player = sg.players[p];
             player.update();
@@ -74,16 +70,6 @@ app.game = (function() {
         for (let i=0; i<sp.platforms.length; i++) {
             let col = sp.platforms[i];
             c.fillRect(col.xMin() * sg.gu, col.yMin() * sg.gu, col.width * sg.gu, col.height * sg.gu);
-        }
-    }
-
-    function testing() {
-        let c = a.ctx;
-        for (let i=0; i<s.physics.rigidBodies.length; i++) {
-            let body = s.physics.rigidBodies[i].col;
-            c.strokeStyle = "red";
-            c.lineWidth = 2;
-            c.strokeRect(body.pos.x * sg.gu, body.pos.y * sg.gu, body.width * sg.gu, body.height * sg.gu);
         }
     }
 

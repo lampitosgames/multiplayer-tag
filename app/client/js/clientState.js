@@ -27,10 +27,13 @@ app.state = (function() {
     let physics = {
         lastGameObjectID: 0,
         lastPlatformID: 0,
+        speedLimit: 0,
         jumpHeight: 0,
         jumpTime: 0,
         gravity: undefined,
         jumpVel: undefined,
+        moveSpeed: undefined,
+        sprintMult: undefined,
         platforms:[],
         gameObjects: {}
     };
@@ -39,6 +42,8 @@ app.state = (function() {
         shouldUpdateServer: false,
         moveLeft: false,
         moveRight: false,
+        dropDown: false,
+        sprint: false,
         shouldJump: false
     };
 
@@ -51,7 +56,9 @@ app.state = (function() {
         //Timestamp of the last update loop
         lastTime: 0,
         //Current frames per second
-        fps: 0
+        fps: 0,
+        //Timers for individual clients so that syncing can happen properly
+        clientTimers: {}
     };
 
     //Expose all state variables to the app

@@ -10,7 +10,7 @@ import physObj from '../../js/physics/physicsObjects';
 //Script globals
 let io;
 let players;
-let sp;
+let sp, st;
 
 /**
  * Used to initialize the game.  It initializes other modules and gets shorthand variables
@@ -26,6 +26,7 @@ let init = (_io) => {
     //Store a shorthand reference to the players array
     players = state.game.players;
     sp = state.physics;
+    st = state.time;
 
     physics.start();
 }
@@ -34,9 +35,9 @@ let init = (_io) => {
  * The game update loop
  * Runs at 60fps on the server
  */
-let update = () => {
+let updateGame = () => {
     //Set timeout to self-call this function at 60FPS
-    setTimeout(update, (1000 / 60));
+    setTimeout(updateGame, (1000 / 60));
     //Update other modules
     time.update();
     physics.update();
@@ -47,15 +48,26 @@ let update = () => {
     }
 }
 
+let updateNetwork = () => {
+    setTimeout(updateNetwork, (1000 / 30));
+
+    let playerData = {};
+    for (const i in players) {
+        let curData = playerData[players[i].id] = players[i].getData();
+        curData.serverTime = st.clientTimers[players[i].id];
+    }
+    //Emit the full player list to the new client
+    io.emit('allPlayers', playerData);
+}
+
 /**
  * This function will update the server's version of a specific player's data from
  * their game client.
  * Then that data gets broadcast to all other clients.
  */
 let updatePlayerFromClient = (socket, data) => {
+
     players[data.id].setData(data);
-    //Broadcast changes to other players
-    socket.broadcast.emit('updatePlayer', data);
 }
 
 /**
@@ -70,18 +82,16 @@ let addNewPlayer = (socket) => {
     //Create a new player object and store it in the array
     players[id] = new p.Player(id, utils.randomInt(0, 10), utils.randomInt(0, 10));
     players[id].gameObject.hasGravity = true;
+    time.startClientTimer(id, 0);
 
-    //Get data for all players
-    let playerData = {};
-    for (const i in players) {
-        playerData[players[i].id] = players[i].getData();
-    }
-    //Emit the full player list to the new client
-    socket.emit('allPlayers', playerData);
     //Emit the new player's id to their client
     socket.emit('setClientID', id);
-    //Emit the new player to all other connected clients
-    socket.broadcast.emit('newPlayer', playerData[id]);
+
+    //Add server time to the response
+    let newPlayerData = players[id].getData();
+    newPlayerData.time = st.clientTimers[id];
+    //Emit the new player to all connected clients
+    io.emit('newPlayer', newPlayerData);
 
     //Return the new player's ID
     return id;
@@ -93,6 +103,8 @@ let addNewPlayer = (socket) => {
 let disconnectPlayer = (id) => {
     //Remove the player's Game Object
     delete sp.gameObjects[players[id].gameObject.id];
+    //Remove the player's Timers
+    delete st.clientTimers[id];
     //Remove the player's data in the player array
     delete players[id];
     //Emit that a player disconnected
@@ -102,7 +114,8 @@ let disconnectPlayer = (id) => {
 //Export everything
 let _game = {
     init,
-    update,
+    updateGame,
+    updateNetwork,
     updatePlayerFromClient,
     addNewPlayer,
     disconnectPlayer
