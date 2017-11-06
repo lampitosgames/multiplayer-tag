@@ -1,0 +1,9 @@
+{
+	"name": "winter_spritesheet",
+	"tileWidth": 70,
+	"tileHeight": 70,
+	"spacing": 0,
+	"tileCount": 98,
+	"columns": 14,
+	"spritesheet": "./assets/spritesheets/winter_spritesheet.png"
+}

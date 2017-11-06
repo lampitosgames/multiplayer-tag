@@ -47,6 +47,14 @@ app.state = (function() {
         shouldJump: false
     };
 
+    let image = {
+        spritesheetNames: [
+            "core_spritesheet",
+            "winter_spritesheet"
+        ],
+        sheets: {}
+    }
+
     //Time module state
     let time = {
         //Delta time
@@ -67,6 +75,7 @@ app.state = (function() {
         game: game,
         physics: physics,
         player: player,
+        image: image,
         time: time
     };
 }());
