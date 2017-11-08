@@ -42,8 +42,9 @@ io.on('connection', (socket) => {
     });
 });
 
+let port = process.env.PORT || 8000;
 //Start a server on port 8000
-server.listen(8000, () => {
+server.listen(port, () => {
     console.log("Server listening on " + server.address().port);
     //Initialize the game
     game.init(io);
