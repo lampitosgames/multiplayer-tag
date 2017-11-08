@@ -11,7 +11,7 @@
         "npm"
     ],
     "scripts": {
-        "start": "npm run-script build & node dist/server.js --exec babel-node",
+        "start": "nodemon dist/server.js --exec babel-node",
         "build": "babel app -d dist & cp -r app/client dist & cp -r app/css dist & cp -r app/assets dist",
         "clean-build": "rm -rf dist & npm run-script build",
         "serve": "node dist/server.js"
@@ -24,13 +24,13 @@
     "homepage": "https://github.com/lampitosgames/multiplayer-tag#readme",
     "devDependencies": {
         "babel-cli": "^6.26.0",
-        "babel-preset-env": "^1.6.1",
-        "nodemon": "^1.12.1"
+        "babel-preset-env": "^1.6.1"
     },
     "dependencies": {
         "express": "^4.16.2",
         "jsonfile": "^4.0.0",
         "socket.io": "^2.0.4",
-        "victor": "^1.1.0"
+        "victor": "^1.1.0",
+        "nodemon": "^1.12.1"
     }
 }
