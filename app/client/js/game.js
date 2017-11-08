@@ -1,11 +1,8 @@
 "use strict";
 
-app.canvas = undefined;
-app.ctx = undefined;
-
 app.game = (function() {
     let a = app;
-    let s, sg, se, st, sp;
+    let s, sg, se, st, sp, sv;
 
     /**
      * Initialization
@@ -17,9 +14,10 @@ app.game = (function() {
         se = s.e;
         st = s.time;
         sp = s.physics;
+        sv = s.view;
 
-        //Store the canvas element
-        a.canvas = document.getElementById("canvas");
+        //Init the main view
+        sv.active = new a.view.View(0, 0, 100, 100);
 
         //Bind resize, then call it as part of initialization
         window.addEventListener("resize", resize);
@@ -52,12 +50,8 @@ app.game = (function() {
         a.physics.update();
         a.playerUpdates.update();
 
-        //Update all players
-        for (const p in sg.players) {
-        }
-
         //Re-draw the background
-        let c = a.ctx;
+        let c = a.bufferCtx;
         c.fillStyle = "white";
         c.fillRect(0, 0, a.viewport.width, a.viewport.height);
 
@@ -68,13 +62,17 @@ app.game = (function() {
             let player = sg.players[p];
             player.update();
             c.fillStyle = "red";
-            c.fillRect(player.gameObject.pos.x * sg.gu, player.gameObject.pos.y * sg.gu, player.gameObject.width * sg.gu, player.gameObject.height * sg.gu);
+            let relativePos = sv.active.getObjectRelativePosition(player.gameObject);
+            c.fillRect(relativePos.x, relativePos.y, player.gameObject.width * sg.gu, player.gameObject.height * sg.gu);
         }
 
-        // for (let i=0; i<sp.platforms.length; i++) {
-        //     let col = sp.platforms[i];
-        //     c.fillRect(col.xMin() * sg.gu, col.yMin() * sg.gu, col.width * sg.gu, col.height * sg.gu);
-        // }
+        //Move the view to the client player
+        if (sg.players[sg.clientID] != undefined) {
+            sv.active.follow(sg.players[sg.clientID].gameObject.center().clone().multiplyScalar(sg.gu));
+        }
+
+        //Lastly, swap in the buffer canvas
+        a.image.swapBuffer();
     }
 
     /**
@@ -82,11 +80,22 @@ app.game = (function() {
      */
     function resize() {
         a.viewport = a.getViewport();
+        //Resize the view
+        sv.active.width = a.viewport.width;
+        sv.active.height = a.viewport.height;
+
+        //Re-scale game units based on the active view
+        sv.active.rescaleGU();
         //Resize the canvas to be 100vwX100vh
         a.canvas.setAttribute("width", a.viewport.width);
         a.canvas.setAttribute("height", a.viewport.height);
+        //Resize the buffer canvas
+        a.bufferCanvas.setAttribute("width", a.viewport.width);
+        a.bufferCanvas.setAttribute("height", a.viewport.height);
         //Replace the old context with the newer, resized version
         a.ctx = a.canvas.getContext('2d');
+        //Replace the old buffer context
+        a.bufferCtx = a.bufferCanvas.getContext('2d');
     }
 
     return {

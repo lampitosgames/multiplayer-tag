@@ -31,9 +31,9 @@
     function start() {
         let JSONLoaded;
         if (useNodeJS) {
-            JSONLoaded = getJSONServer('app/assets/mapData/testMap.json');
+            JSONLoaded = getJSONServer('app/assets/mapData/mainLevel.json');
         } else {
-            JSONLoaded = getJSONClient('./assets/mapData/testMap.json');
+            JSONLoaded = getJSONClient('./assets/mapData/mainLevel.json');
         }
 
         JSONLoaded.then(loadLevel);

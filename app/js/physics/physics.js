@@ -34,7 +34,7 @@
 
         sp = state.physics;
 
-        sp.speedLimit = 75;
+        sp.speedLimit = 60;
 
         //Acceleration due to gravity
         // a = 2d / t^2

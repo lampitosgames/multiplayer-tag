@@ -17,7 +17,7 @@ app.state = (function() {
         //ID of the animation being used
         animationID: 0,
         //Game Unit.  32 pixels
-        gu: 38,
+        gu: 30,
         //Player ID of the client
         clientID: undefined,
         //Holds all player data
@@ -55,6 +55,11 @@ app.state = (function() {
         sheets: {}
     }
 
+    let view = {
+        active: undefined,
+        viewScale: 50
+    }
+
     //Time module state
     let time = {
         //Delta time
@@ -76,6 +81,7 @@ app.state = (function() {
         physics: physics,
         player: player,
         image: image,
+        view: view,
         time: time
     };
 }());

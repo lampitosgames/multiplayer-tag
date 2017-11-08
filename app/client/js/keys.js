@@ -9,6 +9,7 @@ app.keys = (function() {
     //Mouse state variables
     let mouse;
     let mouseDown;
+    let scrollCallbacks = [];
 
     function init() {
         //Add an event listener for keydown
@@ -53,6 +54,21 @@ app.keys = (function() {
         window.addEventListener("mousemove", function(e) {
             //Get the mouse position
             mouse = [e.clientX, e.clientY];
+        });
+        //Add an event listener for mouse wheel events
+        window.addEventListener("wheel", function(e) {
+            //Cross-browser compatible scroll delta
+            let delta = e.wheelDelta != undefined ? e.wheelDelta : -1 * e.deltaY;
+            //Loop through all callbacks
+            for (let i=0; i<scrollCallbacks.length; i++) {
+                //if down
+                if (delta < 0) {
+                    scrollCallbacks[i](-1);
+                //if up
+                } else if (delta > 0) {
+                    scrollCallbacks[i](1);
+                }
+            }
         });
     }
 
@@ -129,6 +145,14 @@ app.keys = (function() {
     }
 
     /**
+     * Binds a function to the mouse scrolling
+     * an integer will be passed in to the function to determine direction
+     */
+    function scroll(callback) {
+        scrollCallbacks.push(callback);
+    }
+
+    /**
      * Returns the numerical keycode given a string
      * Does nothing if an integer is passed
      * This only covers the most common keys
@@ -138,6 +162,15 @@ app.keys = (function() {
         if (typeof key === 'string') {
             //This is probably inefficient
             switch (key) {
+                case "=":
+                    keyCode = 187;
+                    break;
+                case "+":
+                    keyCode = 187;
+                    break;
+                case "-":
+                    keyCode = 189;
+                    break;
                 case "up":
                     keyCode = 38;
                     break;
@@ -197,6 +230,7 @@ app.keys = (function() {
         keyUp: keyUp,
         keyDown: keyDown,
         pressed: pressed,
+        scroll: scroll,
         mouse: function() {
             return mouse;
         },

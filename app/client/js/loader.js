@@ -18,6 +18,7 @@ window.onload = function() {
     app.physObj.init();
     app.playerUpdates.init();
     app.levelLoader.init();
+    app.view.init();
 
     //Initialize main
     app.game.init();
