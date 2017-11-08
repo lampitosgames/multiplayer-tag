@@ -11,8 +11,9 @@
         "npm"
     ],
     "scripts": {
-        "start": "nodemon app/server.js --exec babel-node",
-        "build": "babel app -d dist",
+        "start": "npm run-script build & node dist/server.js --exec babel-node",
+        "build": "babel app -d dist & cp -r app/client dist & cp -r app/css dist & cp -r app/assets dist",
+        "clean-build": "rm -rf dist & npm run-script build",
         "serve": "node dist/server.js"
     },
     "author": "Daniel Timko <det2948@rit.edu>",
