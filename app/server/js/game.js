@@ -8,6 +8,7 @@ import physics from '../../js/physics/physics';
 import physObj from '../../js/physics/physicsObjects';
 
 import levelLoader from '../../js/levelLoader';
+import scoring from '../../js/scoring';
 
 //Script globals
 let io;
@@ -24,6 +25,7 @@ let init = (_io) => {
     physics.init();
     physObj.init();
     levelLoader.init();
+    scoring.init(_io);
     io = _io;
 
     //Store a shorthand reference to the players array
@@ -45,6 +47,7 @@ let updateGame = () => {
     //Update other modules
     time.update();
     physics.update();
+    scoring.update();
 
     //Update all players
     for (const id in players) {
@@ -70,8 +73,11 @@ let updateNetwork = () => {
  * Then that data gets broadcast to all other clients.
  */
 let updatePlayerFromClient = (socket, data) => {
-
     players[data.id].setData(data);
+}
+
+let declareNewAttacker = (attackerID) => {
+    scoring.setNewAttacker(attackerID);
 }
 
 /**
@@ -84,7 +90,7 @@ let addNewPlayer = (socket) => {
     let id = state.game.lastPlayerID++;
 
     //Create a new player object and store it in the array
-    players[id] = new p.Player(id, utils.randomInt(0, 10), utils.randomInt(0, 10));
+    players[id] = new p.Player(id, utils.randomInt(5, 30), utils.randomInt(5, 10));
     players[id].gameObject.hasGravity = true;
     time.startClientTimer(id, 0);
 
@@ -111,6 +117,11 @@ let disconnectPlayer = (id) => {
     delete st.clientTimers[id];
     //Remove the player's data in the player array
     delete players[id];
+
+    //If that player was the attacker
+    if (state.score.attackingPlayerID == id) {
+        state.score.attackingPlayerID = undefined;
+    }
     //Emit that a player disconnected
     io.emit('removePlayer', id);
 }

@@ -44,6 +44,9 @@
         this.shouldJump = false;
         this.jump = 0;
 
+        //Gameplay variables
+        this.attacking = false;
+
         /**
          * Called every update.  Should be time independent
          */
@@ -59,7 +62,7 @@
             }
             //If jumping
             if (this.shouldJump == true) {
-                this.gameObject.vel.add(sp.jumpVel);
+                this.gameObject.vel.y = sp.jumpVel.y;
                 this.gameObject.jump++;
                 this.shouldJump = false;
             }
@@ -76,6 +79,7 @@
                 moveRight: this.moveRight,
                 sprint: this.sprint,
                 shouldJump: this.shouldJump,
+                attacking: this.attacking,
                 gameObject: this.gameObject.getData()
             };
         }
@@ -88,6 +92,7 @@
             this.moveRight = data.moveRight;
             this.sprint = data.sprint;
             this.shouldJump = data.shouldJump;
+            this.attacking = data.attacking;
 
             let timer = st.clientTimers[data.id];
 

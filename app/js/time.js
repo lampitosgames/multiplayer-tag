@@ -40,9 +40,13 @@
         st.dt = calculateDeltaTime();
         //Add the delta to the total runtime
         st.runTime += st.dt;
-        //Add the delta to individual Timers
+        //Add the delta to all client timers
         for (const t in st.clientTimers) {
             st.clientTimers[t] += st.dt;
+        }
+        //Add the delta to all other timers
+        for (const t in st.timers) {
+            st.timers[t] += st.dt;
         }
     }
 
@@ -50,9 +54,14 @@
         st.clientTimers[_id] = _serverTime;
     }
 
+    function startNewTimer(_id) {
+        st.timers[_id] = 0;
+    }
+
     let _time = {
         calculateDeltaTime: calculateDeltaTime,
         startClientTimer: startClientTimer,
+        startNewTimer: startNewTimer,
         update: update,
         init: init,
         dt: function() {

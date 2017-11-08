@@ -82,7 +82,7 @@
                 //Check the collision
                 let m = physics.AABB(this, plat);
                 //If they are not colliding, continue
-                if (m.norm.length() < 1.0) {
+                if (m.norm.lengthSq() < 1.0) {
                     continue;
                 }
 
@@ -97,14 +97,14 @@
                     this.xMax(plat.xMin());
                 }
                 //Collision is to the top
-                if (m.norm.y < 0 && plat.solid) {
+                if (m.norm.y < 0 && plat.solid && this.vel.y < 0) {
                     this.vel.y = 0;
                     this.yMin(plat.yMax());
                 }
                 //Collision is to the bottom
                 if (m.norm.y > 0) {
-                    //If the player is moving up and the platform isn't solid, don't apply the collision
-                    if (this.vel.y < 0 && !plat.solid) {
+                    //If the player is moving up, don't apply the collision
+                    if (this.vel.y < 0) {
                         continue;
                     }
                     //If the platform is not solid and the player is dropping, don't apply collision

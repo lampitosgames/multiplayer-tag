@@ -29,6 +29,11 @@ io.on('connection', (socket) => {
             game.updatePlayerFromClient(socket, data);
         });
 
+        //Listen for new attackers
+        socket.on('tagPlayer', (id) => {
+            game.declareNewAttacker(id);
+        });
+
         //Only bind disconnect if the player was created in the first place
         //Disconnect the player
         socket.on('disconnect', () => {

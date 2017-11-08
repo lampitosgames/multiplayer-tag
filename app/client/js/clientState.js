@@ -24,6 +24,12 @@ app.state = (function() {
         players: {}
     };
 
+    let score = {
+        attackingPlayerID: undefined,
+        lastAttacker: undefined,
+        immunityLength: 3
+    };
+
     let physics = {
         lastGameObjectID: 0,
         lastPlatformID: 0,
@@ -71,13 +77,16 @@ app.state = (function() {
         //Current frames per second
         fps: 0,
         //Timers for individual clients so that syncing can happen properly
-        clientTimers: {}
+        clientTimers: {},
+        //General timers with unique ids
+        timers: {}
     };
 
     //Expose all state variables to the app
     return {
         e: e,
         game: game,
+        score: score,
         physics: physics,
         player: player,
         image: image,

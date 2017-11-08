@@ -62,6 +62,9 @@ app.game = (function() {
             let player = sg.players[p];
             player.update();
             c.fillStyle = "red";
+            if (sg.players[p].attacking) {
+                c.fillStyle = "blue";
+            }
             let relativePos = sv.active.getObjectRelativePosition(player.gameObject);
             c.fillRect(relativePos.x, relativePos.y, player.gameObject.width * sg.gu, player.gameObject.height * sg.gu);
         }

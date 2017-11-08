@@ -26,7 +26,7 @@ app.view = (function() {
             } else if (dir < 0) {
                 sv.viewScale += 2;
             }
-            sv.viewScale = a.utils.clamp(sv.viewScale, 40, 80);
+            sv.viewScale = a.utils.clamp(sv.viewScale, 40, 74);
             sv.active.rescaleGU();
         });
     }
@@ -167,7 +167,7 @@ app.view = (function() {
         this.rescaleGU = function() {
             sg.gu = Math.round(Math.max(this.width, this.height) / sv.viewScale);
             //Re-define position limits for the view
-            sv.active.setLimitsGU(0, 150, 0, 150);
+            sv.active.setLimitsGU(0, 75, 0, 75);
             //Make sure they didn't zoom out past the world border
             sv.active.xMin(sv.active.xMin());
             sv.active.xMax(sv.active.xMax());

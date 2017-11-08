@@ -56,6 +56,17 @@ app.socket = (function() {
                 }
             }
         });
+
+        //Listen for new attackers
+        socket.on('newAttacker', function(newAttacker) {
+            s.score.lastAttacker = s.score.attackingPlayerID;
+            //Delete the last declared timer
+            delete s.time.timers.clientLastDeclared;
+            //Start an immunity timer
+            a.time.startNewTimer("lastTaggedImmunity");
+            //Set the new attacker
+            s.score.attackingPlayerID = newAttacker;
+        });
     }
 
     /**
@@ -66,6 +77,14 @@ app.socket = (function() {
         playerData.time = st.clientTimers[sg.clientID];
 
         socket.emit('updatePlayer', playerData);
+    }
+
+    /**
+     * Called if the client is attacking and they tag someone.
+     * Pass the tagged player's id to the server
+     */
+    function declareNewAttacker(id) {
+        socket.emit('tagPlayer', id);
     }
 
     /**

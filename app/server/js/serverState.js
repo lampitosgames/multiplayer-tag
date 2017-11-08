@@ -1,9 +1,13 @@
 
 let game = {
     lastPlayerID: 0,
-    //Game Unit.  32 pixels
-    gu: 38,
     players: {}
+};
+
+let score = {
+    attackingPlayerID: undefined,
+    lastAttacker: undefined,
+    immunityLength: 3
 };
 
 let physics = {
@@ -18,7 +22,7 @@ let physics = {
     sprintMult: undefined,
     platforms: [],
     gameObjects: {}
-}
+};
 
 //Time module state
 let time = {
@@ -31,11 +35,14 @@ let time = {
     //Current frames per second
     fps: 0,
     //Timers for individual clients so that syncing can happen properly
-    clientTimers: {}
+    clientTimers: {},
+    //General timers with unique ids
+    timers: {}
 };
 
 let _state = {
     game: game,
+    score: score,
     physics: physics,
     time: time
 };
