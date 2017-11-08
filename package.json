@@ -11,7 +11,7 @@
         "npm"
     ],
     "scripts": {
-        "start": "nodemon dist/server.js --exec babel-node",
+        "start": "nodemon app/server.js --exec babel-node",
         "build": "babel app -d dist & cp -r app/client dist & cp -r app/css dist & cp -r app/assets dist",
         "clean-build": "rm -rf dist & npm run-script build",
         "serve": "node dist/server.js"
