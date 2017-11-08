@@ -51,7 +51,7 @@ app.game = (function() {
         a.playerUpdates.update();
 
         //Re-draw the background
-        let c = a.bufferCtx;
+        let c = a.ctx;
         c.fillStyle = "white";
         c.fillRect(0, 0, a.viewport.width, a.viewport.height);
 
@@ -75,7 +75,7 @@ app.game = (function() {
         }
 
         //Lastly, swap in the buffer canvas
-        a.image.swapBuffer();
+        // a.image.swapBuffer();
     }
 
     /**

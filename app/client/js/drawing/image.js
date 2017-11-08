@@ -40,7 +40,7 @@ app.image = (function() {
             return;
         }
         //Loop through every layer and draw it to the canvas
-        let c = a.bufferCtx;
+        let c = a.ctx;
 
         for (let l = 0; l<layers.length; l++) {
             //Loop through the data
