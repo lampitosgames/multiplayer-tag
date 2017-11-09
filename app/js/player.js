@@ -100,6 +100,15 @@
 
             st.clientTimers[data.id] = data.time;
         }
+
+        /**
+         * Set data from the server for THIS client.
+         * This means the game is client-authoritative.
+         */
+        this.setClientData = function(data) {
+            this.attacking = data.attacking;
+            st.clientTimers[data.id] = data.time;
+        }
     }
 
     let _Player = {

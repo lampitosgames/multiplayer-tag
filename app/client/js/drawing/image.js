@@ -47,7 +47,8 @@ app.image = (function() {
             for (let i = 0; i<layers[l].data.length; i++) {
                 let x = i % layers[l].width;;
                 let y = Math.floor(i / layers[l].width);
-
+                x *= sg.gu;
+                y *= sg.gu;
                 //Tile source bounds
                 let tileID = layers[l].data[i];
                 if (tileID == 0) { continue; }
@@ -56,9 +57,17 @@ app.image = (function() {
                 let tile = sheet.tile(tileID);
 
                 //Destination bounds
-                let destPos = sv.active.getObjectRelativePosition({x: x, y: y});
                 let dWidth = sg.gu;
                 let dHeight = sg.gu;
+
+                if (x > sv.active.xMax() ||
+                    y > sv.active.yMax() ||
+                    x + dWidth < sv.active.xMin() ||
+                    y + dHeight < sv.active.yMin()) {
+                        continue;
+                    }
+
+                let destPos = sv.active.getObjectRelativePosition({x: x, y: y}, false);
 
                 c.drawImage(sheet.img, tile.x, tile.y, tile.width, tile.height, Math.round(destPos.x), Math.round(destPos.y), dWidth, dHeight);
 

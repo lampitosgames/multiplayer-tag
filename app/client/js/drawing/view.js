@@ -150,16 +150,17 @@ app.view = (function() {
             );
         }
 
-        this.getObjectRelativePosition = function(obj) {
+        this.getObjectRelativePosition = function(obj, multiplyByGU) {
             if (obj.pos == undefined) {
+
                 return {
-                    x: obj.x*sg.gu - this.xMin(),
-                    y: obj.y*sg.gu - this.yMin()
+                    x: obj.x*(multiplyByGU ? sg.gu : 1) - this.xMin(),
+                    y: obj.y*(multiplyByGU ? sg.gu : 1) - this.yMin()
                 };
             } else {
                 return {
-                    x: obj.pos.x*sg.gu - this.xMin(),
-                    y: obj.pos.y*sg.gu - this.yMin()
+                    x: obj.pos.x*(multiplyByGU ? sg.gu : 1) - this.xMin(),
+                    y: obj.pos.y*(multiplyByGU ? sg.gu : 1) - this.yMin()
                 }
             }
         }

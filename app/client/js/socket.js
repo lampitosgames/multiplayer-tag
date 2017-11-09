@@ -51,8 +51,8 @@ app.socket = (function() {
                 }
                 if (sg.clientID != id) {
                     sg.players[id].setData(data[id]);
-                } else if (!s.player.shouldUpdateServer) {
-                    sg.players[id].setData(data[id]);
+                } else {
+                    sg.players[id].setClientData(data[id]);
                 }
             }
         });
