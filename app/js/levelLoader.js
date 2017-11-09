@@ -34,6 +34,7 @@
             JSONLoaded = getJSONServer('app/assets/mapData/mainLevel.json');
         } else {
             JSONLoaded = getJSONClient('./assets/mapData/mainLevel.json');
+            state.game.loading.push(JSONLoaded);
         }
 
         JSONLoaded.then(loadLevel);

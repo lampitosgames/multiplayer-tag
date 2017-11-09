@@ -4,7 +4,9 @@
     let physics;
     let io;
     let time;
-    let s, sp, sg;
+    let s,
+        sp,
+        sg;
 
     //Server or client
     let useNodeJS = false;
@@ -32,22 +34,26 @@
         /*
          * Common code
          */
-        //Get the attacker
-        let attacker = sg.players[s.score.attackingPlayerID];
         //If there isn't an attacker, attempt to choose one
-        if (attacker == undefined) {
+        if (s.score.attackingPlayerID == undefined) {
             //If there are no players, return
             if (Object.keys(sg.players).length == 0) {
                 return;
             }
-            let count = 0;
             //There are players.  Pick a random one
             for (const pID in sg.players) {
-                if (Math.random() < 1 / ++count) {
-                    setNewAttacker(pID);
-                }
+                setNewAttacker(pID);
+                break;
             }
         }
+        //Get the attacker
+        let attacker = sg.players[s.score.attackingPlayerID];
+        //Set all players to not be attacking
+        for (const id in sg.players) {
+            sg.players[id].attacking = false;
+        }
+        attacker.attacking = true;
+
         //If there is a new attacker, their ID will go here
         let newAttacker = -1;
 
@@ -90,11 +96,12 @@
             s.score.lastPlayerID = s.score.attackingPlayerID;
             //Update the attacking player
             s.score.attackingPlayerID = newAttacker;
-            sg.players[newAttacker].attacking = true;
-            //Set the old attacker to no longer be attacking
-            if (s.score.lastPlayerID != undefined) {
-                sg.players[s.score.lastPlayerID].attacking = false;
+            //Set all players to not be attacking
+            for (const id in sg.players) {
+                sg.players[id].attacking = false;
             }
+            //Set the new attacker to attacking
+            sg.players[newAttacker].attacking = true;
             io.emit("newAttacker", newAttacker);
         }
     }
@@ -116,7 +123,6 @@
                 //Trust the client here because people will get upset if lag caused them not to tag
                 //Don't actually change anything client-side.  That will happen when the server responds
                 app.socket.declareNewAttacker(newAttacker);
-                console.log("new attacker declared");
                 //Reset the timer
                 time.startNewTimer("clientLastDeclared");
             }

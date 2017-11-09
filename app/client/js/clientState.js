@@ -7,21 +7,28 @@ app.state = (function() {
     //Enum values for all the state.  Keys must be unique
     let e = {
         //GAME STATES
-        START_SCREEN: 1000,
-        CONNECTING: 1001,
-        PLAYING: 1002,
+        LOADING: 1000,
+        TUTORIAL_SCREEN: 1001,
+        START_SCREEN: 1002,
+        CONNECTING: 1003,
+        PLAYING: 1004,
+        GAME_OVER: 1005
     };
 
     //Main module state
     let game = {
         //ID of the animation being used
         animationID: 0,
+        //Game state.  LOADING by default
+        state: e.LOADING,
         //Game Unit.  32 pixels
         gu: 30,
         //Player ID of the client
         clientID: undefined,
         //Holds all player data
-        players: {}
+        players: {},
+        //An array of promises.  Once they all resolve, all assets have loaded
+        loading: []
     };
 
     let score = {
@@ -58,7 +65,11 @@ app.state = (function() {
             "core_spritesheet",
             "winter_spritesheet"
         ],
-        sheets: {}
+        backgroundNames: [
+            "bg_grasslands.png",
+        ],
+        sheets: {},
+        backgrounds: {}
     }
 
     let view = {

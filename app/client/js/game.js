@@ -32,7 +32,8 @@ app.game = (function() {
         a.physics.start();
         //Start the keys module
         a.keys.start();
-
+        //Load the level
+        //TODO: Make level selection a thing
         a.levelLoader.start();
 
         //Start the update loop
@@ -45,6 +46,31 @@ app.game = (function() {
     function update() {
         //Start the animation loop
         sg.animationID = requestAnimationFrame(update);
+
+        //switch based on game state
+        switch (sg.state) {
+            //If assets are still loading
+            case se.LOADING:
+                updateLoading();
+                return;
+            case se.START_SCREEN:
+
+                break;
+            case se.CONNECTING:
+
+                break;
+            case se.PLAYING:
+
+                break;
+            case se.PAUSED:
+
+                break;
+            case se.GAME_OVER:
+
+                break;
+
+        }
+
         //Update modules
         a.time.update();
         a.physics.update();
@@ -73,9 +99,26 @@ app.game = (function() {
         if (sg.players[sg.clientID] != undefined) {
             sv.active.follow(sg.players[sg.clientID].gameObject.center().clone().multiplyScalar(sg.gu));
         }
+    }
 
-        //Lastly, swap in the buffer canvas
-        // a.image.swapBuffer();
+    function updateLoading() {
+        //If there are still promises
+        if (sg.loading.length > 0) {
+            //Draw progress bar
+            let c = a.ctx;
+            c.fillStyle = "white";
+            c.fillRect(0, 0, a.viewport.width, a.viewport.height);
+            c.font = "48px Grobold"
+            c.textAlign = "center";
+            c.textBaseline = "middle";
+            c.fillStyle = "red";
+            c.fillText("Loading...", a.viewport.width/2, a.viewport.height/2);
+            return;
+        //Everything has loaded
+        } else {
+            //Set the state to display the start screen
+            sg.state = se.TUTORIAL_SCREEN;
+        }
     }
 
     /**
@@ -92,13 +135,8 @@ app.game = (function() {
         //Resize the canvas to be 100vwX100vh
         a.canvas.setAttribute("width", a.viewport.width);
         a.canvas.setAttribute("height", a.viewport.height);
-        //Resize the buffer canvas
-        a.bufferCanvas.setAttribute("width", a.viewport.width);
-        a.bufferCanvas.setAttribute("height", a.viewport.height);
         //Replace the old context with the newer, resized version
         a.ctx = a.canvas.getContext('2d');
-        //Replace the old buffer context
-        a.bufferCtx = a.bufferCanvas.getContext('2d');
     }
 
     return {

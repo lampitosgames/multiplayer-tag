@@ -25,6 +25,16 @@ window.onload = function() {
 
     //Start the game
     app.game.start();
+
+
+    //Wait for all asset loading promises to resolve, removing each as it does
+    for (let p=0; p<app.state.game.loading.length; p++) {
+        app.state.game.loading[p].then(function() {
+            //delete the promise from the list
+            let index = app.state.game.loading.indexOf(this);
+            app.state.game.loading.splice(index, 1);
+        });
+    }
 }
 
 window.onblur = function() {
