@@ -40,11 +40,15 @@ window.onload = function() {
 }
 
 window.onblur = function() {
-    // app.main.togglePause(true);
+    if (app.state.game.state == app.state.e.PLAYING) {
+        app.state.game.state = app.state.e.PAUSED;
+    }
 }
 
 window.onfocus = function() {
-    // app.main.togglePause(false);
+    if (app.state.game.state == app.state.e.PAUSED) {
+        app.state.game.state = app.state.e.PLAYING;
+    }
 }
 
 /**

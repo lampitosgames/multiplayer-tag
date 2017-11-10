@@ -25,6 +25,8 @@ app.state = (function() {
         gu: 30,
         //Player ID of the client
         clientID: undefined,
+        //Is the player joining a game
+        connecting: false,
         //Holds all player data
         players: {},
         //An array of promises.  Once they all resolve, all assets have loaded

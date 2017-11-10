@@ -70,6 +70,15 @@ app.playerUpdates = (function() {
                 sp.shouldUpdateServer = true;
             }
         });
+
+        //Pause screen
+        a.keys.keyUp("p", "esc", function() {
+            if (sg.state == s.e.PLAYING) {
+                sg.state = s.e.PAUSED;
+            } else if (sg.state == s.e.PAUSED) {
+                sg.state = s.e.PLAYING;
+            }
+        })
     }
 
     function update() {

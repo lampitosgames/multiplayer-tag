@@ -42,6 +42,8 @@ app.socket = (function() {
         */
         socket.on('setClientID', function(id) {
             sg.clientID = id;
+            //Set the game state to playing now that the connection has been established
+            sg.state = s.e.PLAYING;
         });
 
         socket.on('allPlayers', function(data) {
@@ -89,7 +91,6 @@ app.socket = (function() {
 
     /**
      * Called by the client to add themself to the player list
-     * TODO: Add room ids and seperate games
      */
     function addNewPlayer() {
         socket.emit('createNewPlayer');

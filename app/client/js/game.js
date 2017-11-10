@@ -27,8 +27,6 @@ app.game = (function() {
     function start() {
         //Resize the window
         resize();
-        //Tell the server to add a new player
-        a.socket.addNewPlayer();
         //Start the physics simulation
         a.physics.start();
         //Start the keys module
@@ -52,24 +50,29 @@ app.game = (function() {
         switch (sg.state) {
             //If assets are still loading
             case se.LOADING:
+                //Show the loading screen
                 updateLoading();
                 return;
+            //If viewing tutorial
             case se.TUTORIAL_SCREEN:
+                //Display tutorial
                 updateTutorial();
                 return;
+            //If on the start screen
             case se.START_SCREEN:
-
-                break;
+                //Show start screen
+                updateStartScreen();
+                return;
+            //If connecting
             case se.CONNECTING:
-
-                break;
-            case se.PLAYING:
-
-                break;
-            case se.PAUSED:
-
-                break;
+                //Show connecting screen
+                updateConnecting();
+                return;
             case se.GAME_OVER:
+
+                break;
+            //The default.  Update as normal
+            case se.PLAYING:
 
                 break;
 
@@ -102,6 +105,11 @@ app.game = (function() {
         //Move the view to the client player
         if (sg.players[sg.clientID] != undefined) {
             sv.active.follow(sg.players[sg.clientID].gameObject.center().clone().multiplyScalar(sg.gu));
+        }
+
+        //If the game is paused, draw the pause pause screen
+        if (sg.state == se.PAUSED) {
+            updatePaused();
         }
     }
 
@@ -141,7 +149,7 @@ app.game = (function() {
         //Center the image
         let dx = (a.viewport.width / 2) - (dWidth / 2);
         let dy = (a.viewport.height / 2) - (dHeight / 2);
-        
+
         //Draw the image
         c.drawImage(img.img, dx, dy, dWidth, dHeight);
 
@@ -149,6 +157,55 @@ app.game = (function() {
         if (a.keys.mouseDown()) {
             sg.state = se.START_SCREEN;
         }
+    }
+
+    function updateStartScreen() {
+        let c = a.ctx;
+        c.fillStyle = "white";
+        c.fillRect(0, 0, a.viewport.width, a.viewport.height);
+        a.drawing.drawText("This is a temporary title", a.viewport.width / 2, a.viewport.height / 3, "48px Grobold", "rgba(100, 100, 100, 1.0)");
+
+
+        c.fillStyle = "rgb(240, 100, 100)";
+        c.strokeStyle = "rgb(100, 100, 100)";
+
+        //TODO: make a canvas button class
+        let buttonX = a.viewport.width / 2 - 200;
+        let buttonY = a.viewport.height / 2 - 30;
+        let buttonWidth = 400;
+        let buttonHeight = 60;
+
+        let mouse = a.keys.mouse();
+
+        if (mouse[0] > buttonX && mouse[0] < buttonX + buttonWidth && mouse[1] > buttonY && mouse[1] < buttonY + buttonHeight) {
+            c.fillRect(buttonX, buttonY, buttonWidth, buttonHeight);
+            a.drawing.drawText("Join Game", a.viewport.width / 2, a.viewport.height / 2, "30px Grobold", "rgba(250, 250, 250, 1.0)");
+            if (a.keys.mouseDown()) {
+                sg.state = se.CONNECTING;
+            }
+        } else {
+            c.strokeRect(buttonX, buttonY, buttonWidth, buttonHeight);
+            a.drawing.drawText("Join Game", a.viewport.width / 2, a.viewport.height / 2, "30px Grobold", "rgba(140, 140, 140, 1.0)");
+        }
+    }
+
+    function updateConnecting() {
+        if (!sg.connecting) {
+            //Tell the server to add a new player
+            a.socket.addNewPlayer();
+            sg.connecting = true;
+        }
+        let c = a.ctx;
+        c.fillStyle = "white";
+        c.fillRect(0, 0, a.viewport.width, a.viewport.height);
+        a.drawing.drawText("Connecting...", a.viewport.width / 2, a.viewport.height / 2, "60px Grobold", "rgba(100, 100, 100, 1.0)");
+    }
+
+    function updatePaused() {
+        let c = a.ctx;
+        c.fillStyle = "rgba(0, 0, 0, 0.5)";
+        c.fillRect(0, 0, a.viewport.width, a.viewport.height);
+        a.drawing.drawText("Paused", a.viewport.width / 2, a.viewport.height / 2, "60px Grobold", "rgba(200, 200, 200, 1.0)");
     }
 
     /**
