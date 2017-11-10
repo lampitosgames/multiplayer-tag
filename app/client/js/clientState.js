@@ -28,7 +28,9 @@ app.state = (function() {
         //Holds all player data
         players: {},
         //An array of promises.  Once they all resolve, all assets have loaded
-        loading: []
+        loading: [],
+        //Total number of assets loaded asynchronously
+        numAssetsLoading: 0
     };
 
     let score = {
@@ -68,6 +70,7 @@ app.state = (function() {
         backgroundNames: [
             "bg_grasslands.png",
         ],
+        tutorialImg: undefined,
         sheets: {},
         backgrounds: {}
     }

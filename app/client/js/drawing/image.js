@@ -40,6 +40,10 @@ app.image = (function() {
             //Push this background into the array of loading content
             sg.loading.push(si.backgrounds[si.backgroundNames[b]].load());
         }
+        //Load the tutorial Image
+        si.tutorialImg = new a.Background("tutorial.png");
+        sg.loading.push(si.tutorialImg.load());
+
     }
 
     /**

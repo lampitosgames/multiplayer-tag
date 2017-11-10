@@ -26,6 +26,8 @@ window.onload = function() {
     //Start the game
     app.game.start();
 
+    //Store the total number of loading objects
+    app.state.game.numAssetsLoading = app.state.game.loading.length;
 
     //Wait for all asset loading promises to resolve, removing each as it does
     for (let p=0; p<app.state.game.loading.length; p++) {
