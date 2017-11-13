@@ -78,7 +78,12 @@ app.playerUpdates = (function() {
             } else if (sg.state == s.e.PAUSED) {
                 sg.state = s.e.PLAYING;
             }
-        })
+        });
+
+        //Mute audio
+        a.keys.keyUp("m", function() {
+            s.audio.sounds["backgroundMusic.mp3"].gain.gain.value = 0.0;
+        });
     }
 
     function update() {
@@ -92,6 +97,9 @@ app.playerUpdates = (function() {
 
         if (me.gameObject.jump < 2) {
             me.shouldJump = sp.shouldJump;
+            if (sp.shouldJump) {
+                s.audio.sounds["jump.wav"].start();
+            }
         }
 
         if (sp.shouldUpdateServer) {

@@ -68,6 +68,8 @@ app.socket = (function() {
             a.time.startNewTimer("lastTaggedImmunity");
             //Set the new attacker
             s.score.attackingPlayerID = newAttacker;
+            //Play the new attacker sound
+            s.audio.sounds["playerTagged.wav"].start();
         });
     }
 

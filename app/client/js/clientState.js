@@ -12,7 +12,11 @@ app.state = (function() {
         START_SCREEN: 1002,
         CONNECTING: 1003,
         PLAYING: 1004,
-        GAME_OVER: 1005
+        GAME_OVER: 1005,
+
+        //GENERAL CONSTANTS
+        DEFAULT_VOLUME: 1.0,
+        MUSIC_VOLUME: 0.35
     };
 
     //Main module state
@@ -64,6 +68,18 @@ app.state = (function() {
         shouldJump: false
     };
 
+    let audio = {
+        audioCtx: undefined,
+        soundNames: [
+            "backgroundMusic.mp3",
+            "countdown.wav",
+            "gameOver.wav",
+            "jump.wav",
+            "playerTagged.wav"
+        ],
+        sounds: {}
+    }
+
     let image = {
         spritesheetNames: [
             "core_spritesheet",
@@ -106,6 +122,7 @@ app.state = (function() {
         physics: physics,
         player: player,
         image: image,
+        audio: audio,
         view: view,
         time: time
     };

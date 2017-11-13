@@ -5,7 +5,7 @@ let app = {};
 
 window.onload = function() {
     //Initialize the mouse so errors don't get thrown
-    app.mouse = [0, 0];
+    // app.mouse = [0, 0];
 
     //Initialize modules
     app.keys.init();
@@ -19,6 +19,7 @@ window.onload = function() {
     app.playerUpdates.init();
     app.levelLoader.init();
     app.view.init();
+    app.audio.init();
 
     //Initialize main
     app.game.init();

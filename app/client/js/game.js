@@ -73,7 +73,11 @@ app.game = (function() {
                 break;
             //The default.  Update as normal
             case se.PLAYING:
-
+                //Play background music
+                if (!s.audio.sounds["backgroundMusic.mp3"].playing) {
+                    s.audio.sounds["backgroundMusic.mp3"].start();
+                    s.audio.sounds["backgroundMusic.mp3"].gain.gain.value = s.e.MUSIC_VOLUME;
+                }
                 break;
 
         }
@@ -82,6 +86,7 @@ app.game = (function() {
         a.time.update();
         a.physics.update();
         a.playerUpdates.update();
+        a.audio.update();
 
         //Re-draw the background
         let c = a.ctx;
