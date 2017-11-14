@@ -35,6 +35,34 @@ app.socket = (function() {
             delete sg.players[id];
         });
 
+        //Listen for new attackers
+        socket.on('newAttacker', function(newAttacker) {
+            s.score.lastAttacker = s.score.attackingPlayerID;
+            //Delete the last declared timer
+            delete s.time.timers.clientLastDeclared;
+            //Start an immunity timer
+            a.time.startNewTimer("lastTaggedImmunity");
+            //Set the new attacker
+            s.score.attackingPlayerID = newAttacker;
+            //Play the new attacker sound
+            s.audio.sounds["playerTagged.wav"].start();
+        });
+
+        //Listen for game state changes
+        socket.on("updateGameState", function(newState) {
+            s.game.gameState = newState.gameState;
+            s.score.winner = newState.winnerID;
+            s.time.timers.gameStartTimer = newState.gameStartTimer;
+            s.time.timers.gameTimer = newState.gameTimer;
+            s.time.timers.gameOverTimer = newState.gameOverTimer;
+        });
+
+        //Resets the game according to the server
+        socket.on('resetGame', function(data) {
+            s.score.lastBuzzerSecond = 16;
+            s.score.playedGameEndSound = false;
+            s.game.state = s.e.GAME_WAITING_FOR_PLAYERS;
+        });
 
         /*
         These events fire the first time the client connects to the server to inform the client of
@@ -43,7 +71,7 @@ app.socket = (function() {
         socket.on('setClientID', function(id) {
             sg.clientID = id;
             //Set the game state to playing now that the connection has been established
-            sg.state = s.e.PLAYING;
+            sg.clientState = s.e.PLAYING;
         });
 
         socket.on('allPlayers', function(data) {
@@ -57,19 +85,6 @@ app.socket = (function() {
                     sg.players[id].setClientData(data[id]);
                 }
             }
-        });
-
-        //Listen for new attackers
-        socket.on('newAttacker', function(newAttacker) {
-            s.score.lastAttacker = s.score.attackingPlayerID;
-            //Delete the last declared timer
-            delete s.time.timers.clientLastDeclared;
-            //Start an immunity timer
-            a.time.startNewTimer("lastTaggedImmunity");
-            //Set the new attacker
-            s.score.attackingPlayerID = newAttacker;
-            //Play the new attacker sound
-            s.audio.sounds["playerTagged.wav"].start();
         });
     }
 
@@ -102,6 +117,7 @@ app.socket = (function() {
         init: init,
         updateClientPlayer: updateClientPlayer,
         addNewPlayer: addNewPlayer,
+        declareNewAttacker: declareNewAttacker,
         socket: socket
     }
 }());

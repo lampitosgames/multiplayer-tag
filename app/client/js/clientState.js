@@ -6,13 +6,19 @@ app.state = (function() {
 
     //Enum values for all the state.  Keys must be unique
     let e = {
-        //GAME STATES
+        //CLIENT STATES
         LOADING: 1000,
         TUTORIAL_SCREEN: 1001,
         START_SCREEN: 1002,
         CONNECTING: 1003,
         PLAYING: 1004,
-        GAME_OVER: 1005,
+
+        //GAME STATES
+        GAME_WAITING_FOR_PLAYERS: 2000,
+        GAME_STARTING_SOON: 2001,
+        GAME_PLAYING: 2002,
+        GAME_OVER: 2003,
+        GAME_RESETTING: 2004,
 
         //GENERAL CONSTANTS
         DEFAULT_VOLUME: 1.0,
@@ -23,8 +29,10 @@ app.state = (function() {
     let game = {
         //ID of the animation being used
         animationID: 0,
-        //Game state.  LOADING by default
-        state: e.LOADING,
+        //Client state.  LOADING by default
+        clientState: e.LOADING,
+        //Game state.  GAME_WAITING_FOR_PLAYERS by default
+        gameState: e.GAME_WAITING_FOR_PLAYERS,
         //Game Unit.  32 pixels
         gu: 30,
         //Player ID of the client
@@ -44,7 +52,15 @@ app.state = (function() {
     let score = {
         attackingPlayerID: undefined,
         lastAttacker: undefined,
-        immunityLength: 3
+        winner: undefined,
+        immunityLength: 3,
+        gameLength: 180,
+        endscreenLength: 10,
+        startCountdownLength: 15,
+
+        //Used for the almost over buzzer
+        lastBuzzerSecond: 16,
+        playedGameEndSound: false
     };
 
     let physics = {

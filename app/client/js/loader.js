@@ -14,6 +14,7 @@ window.onload = function() {
     app.image.init();
     app.socket.init();
     app.p.init();
+    app.scoring.init();
     app.physics.init();
     app.physObj.init();
     app.playerUpdates.init();
@@ -42,14 +43,14 @@ window.onload = function() {
 }
 
 window.onblur = function() {
-    if (app.state.game.state == app.state.e.PLAYING) {
-        app.state.game.state = app.state.e.PAUSED;
+    if (app.state.game.clientState == app.state.e.PLAYING) {
+        app.state.game.clientState = app.state.e.PAUSED;
     }
 }
 
 window.onfocus = function() {
-    if (app.state.game.state == app.state.e.PAUSED) {
-        app.state.game.state = app.state.e.PLAYING;
+    if (app.state.game.clientState == app.state.e.PAUSED) {
+        app.state.game.clientState = app.state.e.PLAYING;
     }
 }
 

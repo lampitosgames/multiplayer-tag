@@ -46,6 +46,7 @@
 
         //Gameplay variables
         this.attacking = false;
+        this.attackTimer = 0;
 
         /**
          * Called every update.  Should be time independent
@@ -80,6 +81,7 @@
                 sprint: this.sprint,
                 shouldJump: this.shouldJump,
                 attacking: this.attacking,
+                attackTimer: this.attackTimer,
                 gameObject: this.gameObject.getData()
             };
         }
@@ -93,6 +95,7 @@
             this.sprint = data.sprint;
             this.shouldJump = data.shouldJump;
             this.attacking = data.attacking;
+            this.attackTimer = data.attackTimer;
 
             let timer = st.clientTimers[data.id];
 
@@ -107,6 +110,7 @@
          */
         this.setClientData = function(data) {
             this.attacking = data.attacking;
+            this.attackTimer = data.attackTimer;
             st.clientTimers[data.id] = data.time;
         }
     }

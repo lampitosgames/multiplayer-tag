@@ -73,10 +73,10 @@ app.playerUpdates = (function() {
 
         //Pause screen
         a.keys.keyUp("p", "esc", function() {
-            if (sg.state == s.e.PLAYING) {
-                sg.state = s.e.PAUSED;
-            } else if (sg.state == s.e.PAUSED) {
-                sg.state = s.e.PLAYING;
+            if (sg.clientState == s.e.PLAYING) {
+                sg.clientState = s.e.PAUSED;
+            } else if (sg.clientState == s.e.PAUSED) {
+                sg.clientState = s.e.PLAYING;
             }
         });
 

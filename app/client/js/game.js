@@ -49,7 +49,7 @@ app.game = (function() {
         sg.animationID = requestAnimationFrame(update);
 
         //switch based on game state
-        switch (sg.state) {
+        switch (sg.clientState) {
             //If assets are still loading
             case se.LOADING:
                 //Show the loading screen
@@ -70,18 +70,14 @@ app.game = (function() {
                 //Show connecting screen
                 updateConnecting();
                 return;
-            case se.GAME_OVER:
-
-                break;
             //The default.  Update as normal
             case se.PLAYING:
                 break;
-
         }
 
 
         //Play background music
-        if (!s.audio.sounds["backgroundMusic.mp3"].playing) {
+        if (!s.audio.sounds["backgroundMusic.mp3"].playing && sg.gameState != s.e.GAME_OVER) {
             s.audio.sounds["backgroundMusic.mp3"].start();
             s.audio.sounds["backgroundMusic.mp3"].gain.gain.value = s.e.MUSIC_VOLUME;
         }
@@ -95,6 +91,7 @@ app.game = (function() {
         a.physics.update();
         a.playerUpdates.update();
         a.audio.update();
+        a.scoring.update();
 
         //Re-draw the background
         let c = a.ctx;
@@ -155,8 +152,11 @@ app.game = (function() {
             sv.active.follow(sg.players[sg.clientID].gameObject.center().clone().multiplyScalar(sg.gu));
         }
 
+        //Draw GUI
+        drawGUI();
+
         //If the game is paused, draw the pause pause screen
-        if (sg.state == se.PAUSED) {
+        if (sg.clientState == se.PAUSED) {
             updatePaused();
         }
     }
@@ -174,7 +174,7 @@ app.game = (function() {
         //Everything has loaded
         } else {
             //Set the state to display the start screen
-            sg.state = se.TUTORIAL_SCREEN;
+            sg.clientState = se.TUTORIAL_SCREEN;
         }
     }
 
@@ -203,7 +203,7 @@ app.game = (function() {
 
         //If the user clicks, go to the start screen
         if (a.keys.mouseDown()) {
-            sg.state = se.START_SCREEN;
+            sg.clientState = se.START_SCREEN;
         }
     }
 
@@ -229,7 +229,7 @@ app.game = (function() {
             c.fillRect(buttonX, buttonY, buttonWidth, buttonHeight);
             a.drawing.drawText("Join Game", a.viewport.width / 2, a.viewport.height / 2, "30px Grobold", "rgba(250, 250, 250, 1.0)");
             if (a.keys.mouseDown()) {
-                sg.state = se.CONNECTING;
+                sg.clientState = se.CONNECTING;
             }
         } else {
             c.strokeRect(buttonX, buttonY, buttonWidth, buttonHeight);
@@ -254,6 +254,88 @@ app.game = (function() {
         c.fillStyle = "rgba(0, 0, 0, 0.5)";
         c.fillRect(0, 0, a.viewport.width, a.viewport.height);
         a.drawing.drawText("Paused", a.viewport.width / 2, a.viewport.height / 2, "60px Grobold", "rgba(200, 200, 200, 1.0)");
+    }
+
+    function drawGUI() {
+        let c = a.ctx;
+
+        switch (sg.gameState) {
+            //Draw waiting for players GUI
+            case s.e.GAME_WAITING_FOR_PLAYERS:
+                a.drawing.drawTextOutline("Waiting For Players", a.viewport.width / 2, 60, "60px Grobold", "rgba(250, 250, 250, 1.0)", "rgba(0, 0, 0, 1.0)");
+                break;
+            //Draw game start countdown GUI
+            case s.e.GAME_STARTING_SOON:
+                let countdownText = "Starting in: " + Math.ceil(s.score.startCountdownLength - s.time.timers.gameStartTimer);
+                a.drawing.drawTextOutline(countdownText, a.viewport.width / 2, 60, "60px Grobold", "rgba(250, 250, 250, 1.0)", "rgba(0, 0, 0, 1.0)");
+                //Draw progress countdown timer
+                a.drawing.drawProgressBar(a.viewport.width * (1/5), 120, a.viewport.width * (3/5), 10, "rgb(100, 100, 100)", "rgb(240, 100, 100)", s.score.startCountdownLength - s.time.timers.gameStartTimer, 0, s.score.startCountdownLength);
+                break;
+
+            //Draw game playing GUI.  SHow players, player scores, and the game timer
+            case s.e.GAME_PLAYING:
+                let currentSecond = Math.ceil(s.score.gameLength - s.time.timers.gameTimer);
+                let timerText = "Time Left: " + currentSecond;
+
+                //If the current second is less than the buzzer, play a sound
+                if (currentSecond < s.score.lastBuzzerSecond) {
+                    s.audio.sounds["countdown.wav"].start();
+                    s.score.lastBuzzerSecond = currentSecond;
+                }
+                a.drawing.drawTextOutline(timerText, a.viewport.width / 2, 20, "20px Grobold", "rgba(250, 250, 250, 1.0)", "rgba(0, 0, 0, 1.0)", 1);
+                a.drawing.drawProgressBar(a.viewport.width * (1/5), 40, a.viewport.width * (3/5), 10, "rgba(0, 0, 0, 0.1)", "rgb(240, 100, 100)", s.score.gameLength - s.time.timers.gameTimer, 0, s.score.gameLength);
+
+                let yHeight = 80;
+                //Draw players and their scores
+                for (const p in sg.players) {
+                    let playerName = "player " + p;
+                    //Add the player's total "it" time
+                    playerName += "  :  Score - " + Math.ceil(sg.players[p].attackTimer);
+                    //Default font color of players
+                    let fontColor = "rgba(250, 250, 250, 1.0)";
+                    //Let the player know which one is them
+                    if (p == sg.clientID) {
+                        fontColor = "rgba(150, 150, 150, 1.0)";
+                        playerName += "  :  You";
+                    }
+                    //Change the font color of the attacker
+                    if (p == s.score.attackingPlayerID) {
+                        fontColor = "rgba(250, 20, 20, 1.0)";
+                    }
+                    //Display this player
+                    a.drawing.drawTextOutline(playerName, 30, yHeight, "30px Grobold", fontColor, "rgba(0, 0, 0, 1.0)", 1, "left");
+                    //Increase the y position for the next player to be displayed
+                    yHeight += 45;
+                }
+                break;
+
+            //Show the game over screen
+            case s.e.GAME_OVER:
+                if (!s.score.playedGameEndSound) {
+                    s.audio.sounds["gameOver.wav"].start();
+                    s.audio.sounds["backgroundMusic.mp3"].stop();
+                    s.score.playedGameEndSound = true;
+                }
+                let c = a.ctx;
+                c.fillStyle = "rgba(0, 0, 0, 0.5)";
+                c.fillRect(0, 0, a.viewport.width, a.viewport.height);
+                //Draw a "Next Game Begins In" countdown timer
+                let endscreenText = "Next Game Begins In: " + Math.ceil(s.score.endscreenLength - s.time.timers.gameOverTimer);
+                a.drawing.drawText(endscreenText, a.viewport.width / 2, 20, "20px Grobold", "rgba(250, 250, 250, 1.0)");
+                a.drawing.drawProgressBar(a.viewport.width * (1/5), 40, a.viewport.width * (3/5), 10, "rgba(0, 0, 0, 0.1)", "rgb(240, 100, 100)", s.score.endscreenLength - s.time.timers.gameOverTimer, 0, s.score.endscreenLength);
+
+                //Display who won
+                //If the client won
+                if (sg.clientID == s.score.winner) {
+                    a.drawing.drawText("You Win!", a.viewport.width / 2, a.viewport.height / 2, "80px Grobold", "rgba(250, 250, 250, 1.0)");
+                    a.drawing.drawText("You were only attacking for " + Math.ceil(sg.players[s.score.winner].attackTimer) + " seconds", a.viewport.width / 2, a.viewport.height / 2 + 100, "30px Grobold", "rgba(200, 200, 200, 1.0)");
+                //Someone else won
+                } else {
+                    a.drawing.drawText("Player " + s.score.winner + " won!", a.viewport.width / 2, a.viewport.height / 2, "80px Grobold", "rgba(250, 250, 250, 1.0)");
+                    a.drawing.drawText("They were only attacking for " + Math.ceil(sg.players[s.score.winner].attackTimer) + " seconds", a.viewport.width / 2, a.viewport.height / 2 + 100, "30px Grobold", "rgba(200, 200, 200, 1.0)");
+                }
+                break;
+        }
     }
 
     /**

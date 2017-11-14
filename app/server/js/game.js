@@ -13,7 +13,7 @@ import scoring from '../../js/scoring';
 //Script globals
 let io;
 let players;
-let sp, st;
+let sp, st, sg;
 
 /**
  * Used to initialize the game.  It initializes other modules and gets shorthand variables
@@ -32,6 +32,7 @@ let init = (_io) => {
     players = state.game.players;
     sp = state.physics;
     st = state.time;
+    sg = state.game;
 
     physics.start();
     levelLoader.start();
@@ -65,6 +66,17 @@ let updateNetwork = () => {
     }
     //Emit the full player list to the new client
     io.emit('allPlayers', playerData);
+
+    //Get game state data
+    let updatedGameState = {
+        gameState: sg.gameState,
+        winnerID: state.score.winner,
+        gameStartTimer: st.timers.gameStartTimer,
+        gameTimer: st.timers.gameTimer,
+        gameOverTimer: st.timers.gameOverTimer
+    };
+    //Emit up-to-date game state to all clients
+    io.emit('updateGameState', updatedGameState);
 }
 
 /**
@@ -132,6 +144,7 @@ let _game = {
     updateGame,
     updateNetwork,
     updatePlayerFromClient,
+    declareNewAttacker,
     addNewPlayer,
     disconnectPlayer
 }

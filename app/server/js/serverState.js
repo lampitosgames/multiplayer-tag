@@ -1,13 +1,27 @@
 
+let e = {
+    //GAME STATES
+    GAME_WAITING_FOR_PLAYERS: 2000,
+    GAME_STARTING_SOON: 2001,
+    GAME_PLAYING: 2002,
+    GAME_OVER: 2003,
+    GAME_RESETTING: 2004
+}
+
 let game = {
     lastPlayerID: 0,
+    gameState: e.GAME_WAITING_FOR_PLAYERS,
     players: {}
 };
 
 let score = {
     attackingPlayerID: undefined,
     lastAttacker: undefined,
-    immunityLength: 3
+    winner: undefined,
+    immunityLength: 3,
+    gameLength: 180,
+    endscreenLength: 10,
+    startCountdownLength: 15,
 };
 
 let physics = {
@@ -41,6 +55,7 @@ let time = {
 };
 
 let _state = {
+    e: e,
     game: game,
     score: score,
     physics: physics,
