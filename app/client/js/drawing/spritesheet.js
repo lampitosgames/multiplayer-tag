@@ -12,6 +12,9 @@ app.Spritesheet = (function() {
         this.tileCount = 0;
         this.columns = 0;
 
+        //Sprite data (if any) from this sheet
+        this.sprites = undefined;
+
         //This will be used as the starting index for tiles in this sheet.
         this.tileStart;
 
@@ -36,6 +39,10 @@ app.Spritesheet = (function() {
                         sheet.tileCount = sheetData.tileCount;
                         sheet.columns = sheetData.columns;
 
+                        if (sheetData.sprites) {
+                            sheet.sprites = sheetData.sprites;
+                        }
+
                         //Load the Image
                         sheet.img = new Image();
                         sheet.img.onload = function() {
@@ -43,6 +50,7 @@ app.Spritesheet = (function() {
                             sheet.ready = true;
                             //Pre-cache tile coordinates
                             sheet.cacheTiles();
+                            sheet.makeSprites();
                             //Resolve the promise once loaded
                             resolve(sheet);
                         }
@@ -71,6 +79,15 @@ app.Spritesheet = (function() {
                     y: y,
                     width: this.tileWidth,
                     height: this.tileHeight
+                }
+            }
+        }
+
+        this.makeSprites = function() {
+            if (this.sprites) {
+                //Create sprites from the data
+                for (const spr in this.sprites) {
+                    app.state.image.sprites[spr] = new app.Sprite(spr, this, this.sprites[spr]);
                 }
             }
         }

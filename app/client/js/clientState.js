@@ -35,6 +35,8 @@ app.state = (function() {
         players: {},
         //An array of promises.  Once they all resolve, all assets have loaded
         loading: [],
+        //Particle emitter that marks the attacker
+        attackerEmitter: undefined,
         //Total number of assets loaded asynchronously
         numAssetsLoading: 0
     };
@@ -81,15 +83,21 @@ app.state = (function() {
     }
 
     let image = {
-        spritesheetNames: [
+        tilesheetNames: [
             "core_spritesheet",
             "winter_spritesheet"
+        ],
+        spritesheetNames: [
+            "p1_spritesheet",
+            "p2_spritesheet"
         ],
         backgroundNames: [
             "bg_grasslands.png",
         ],
         tutorialImg: undefined,
-        sheets: {},
+        tilesheets: {},
+        spritesheets: {},
+        sprites: {},
         backgrounds: {}
     }
 

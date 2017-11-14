@@ -25,13 +25,23 @@ app.image = (function() {
         a.canvas = document.getElementById("canvas");
 
         //Loop through and load all spritesheets
-        for (let i = 0; i < si.spritesheetNames.length; i++) {
+        for (let i = 0; i < si.tilesheetNames.length; i++) {
             //Get the spritesheet name
-            let sheetName = si.spritesheetNames[i];
+            let sheetName = si.tilesheetNames[i];
             //Create a new spritesheet object with that name
-            si.sheets[sheetName] = new a.Spritesheet('./assets/spritesheets/' + sheetName + '.json');
+            si.tilesheets[sheetName] = new a.Spritesheet('./assets/spritesheets/' + sheetName + '.json');
             //Load the spritesheet
-            sg.loading.push(si.sheets[sheetName].load());
+            sg.loading.push(si.tilesheets[sheetName].load());
+        }
+        //Loop through and load all spritesheets
+        for (let s = 0; s < si.spritesheetNames.length; s++) {
+            //Get the name
+            let sheetName = si.spritesheetNames[s];
+            //Create a new spritesheet object with that name
+            si.spritesheets[sheetName] = new a.Spritesheet('./assets/spritesheets/' + sheetName + '.json');
+            //Load the spritesheet
+            sg.loading.push(si.spritesheets[sheetName].load());
+            si.spritesheets[sheetName].tileStart = 0;
         }
         //Loop through and load all backgrounds
         for (let b = 0; b < si.backgroundNames.length; b++) {
@@ -50,10 +60,6 @@ app.image = (function() {
      * Handle all drawing of the level
      */
     function draw() {
-        //If the spritesheet hasn't loaded, do nothing
-        if (!si.sheets["core_spritesheet"].ready || !si.sheets["winter_spritesheet"].ready) {
-            return;
-        }
         let c = a.ctx;
 
         //Loop through every background and draw it to the canvas
@@ -100,9 +106,11 @@ app.image = (function() {
                 }, false);
 
                 c.drawImage(sheet.img, tile.x, tile.y, tile.width, tile.height, Math.round(destPos.x), Math.round(destPos.y), dWidth, dHeight);
-
             }
         }
+
+        //Loop through every sprite and draw it
+        // for (let s=0; s<)
     }
 
     function createTileLayer(layerData) {
@@ -110,9 +118,9 @@ app.image = (function() {
     }
 
     function getSheet(tileID) {
-        for (const sid in si.sheets) {
-            if (tileID - si.sheets[sid].tileStart < si.sheets[sid].tileCount) {
-                return si.sheets[sid]
+        for (const sid in si.tilesheets) {
+            if (tileID - si.tilesheets[sid].tileStart < si.tilesheets[sid].tileCount) {
+                return si.tilesheets[sid]
             }
         }
         //No sheet found

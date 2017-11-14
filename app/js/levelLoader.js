@@ -99,7 +99,7 @@
             let tilesets = data.tilesets;
             for (let i=0; i<tilesets.length; i++) {
                 //Set up the tile ID
-                state.image.sheets[tilesets[i].source].setStart(tilesets[i].firstgid);
+                state.image.tilesheets[tilesets[i].source].setStart(tilesets[i].firstgid);
             }
         }
     }

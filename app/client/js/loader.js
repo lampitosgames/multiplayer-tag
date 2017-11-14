@@ -19,6 +19,7 @@ window.onload = function() {
     app.playerUpdates.init();
     app.levelLoader.init();
     app.view.init();
+    app.particle.init();
     app.audio.init();
 
     //Initialize main

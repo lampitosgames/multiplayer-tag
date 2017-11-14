@@ -4,6 +4,8 @@ app.game = (function() {
     let a = app;
     let s, sg, se, st, sp, sv, si;
 
+    let emitter;
+
     /**
      * Initialization
      */
@@ -73,13 +75,19 @@ app.game = (function() {
                 break;
             //The default.  Update as normal
             case se.PLAYING:
-                //Play background music
-                if (!s.audio.sounds["backgroundMusic.mp3"].playing) {
-                    s.audio.sounds["backgroundMusic.mp3"].start();
-                    s.audio.sounds["backgroundMusic.mp3"].gain.gain.value = s.e.MUSIC_VOLUME;
-                }
                 break;
 
+        }
+
+
+        //Play background music
+        if (!s.audio.sounds["backgroundMusic.mp3"].playing) {
+            s.audio.sounds["backgroundMusic.mp3"].start();
+            s.audio.sounds["backgroundMusic.mp3"].gain.gain.value = s.e.MUSIC_VOLUME;
+        }
+        //Create a particle emitter if it doesn't already exist
+        if (!sg.attackerEmitter) {
+            sg.attackerEmitter = new a.particle.Emitter(new Victor(sg.gu, sg.gu), new Victor(0.0, 0.1));
         }
 
         //Update modules
@@ -95,16 +103,51 @@ app.game = (function() {
 
         a.image.draw();
 
+        sg.attackerEmitter.update();
+
         //Draw all players
         for (const p in sg.players) {
             let player = sg.players[p];
             player.update();
-            c.fillStyle = "red";
-            if (sg.players[p].attacking) {
-                c.fillStyle = "blue";
-            }
+
+            //Get the player sprite to draw
+            let playerSprite = "p1";
+            //Get relative position of the player in the view
             let relativePos = sv.active.getObjectRelativePosition(player.gameObject, true);
-            c.fillRect(relativePos.x, relativePos.y, player.gameObject.width * sg.gu, player.gameObject.height * sg.gu);
+
+            //Move the particle emitter to the attacking player
+            if (sg.players[p].attacking) {
+                sg.attackerEmitter.pos = sg.players[p].gameObject.pos.clone();
+                sg.attackerEmitter.pos.x += sg.players[p].gameObject.width / 2;
+                sg.attackerEmitter.pos.y += sg.players[p].gameObject.height / 2;
+                //Draw as the attacking player
+                playerSprite = "p2";
+            }
+
+            //Jumping and falling sprites
+            if (player.gameObject.drop) {
+                if (player.gameObject.vel.x >= 0) {
+                    playerSprite += "DropRight";
+                } else {
+                    playerSprite += "DropLeft";
+                }
+            } else if (player.gameObject.vel.y < 0) {
+                if (player.gameObject.vel.x >= 0) {
+                    playerSprite += "JumpRight";
+                } else {
+                    playerSprite += "JumpLeft";
+                }
+            //Not moving vertically
+            } else {
+                if (player.gameObject.vel.x > 0) {
+                    playerSprite += "RightWalk";
+                } else if (player.gameObject.vel.x < 0) {
+                    playerSprite += "LeftWalk";
+                } else {
+                    playerSprite += "Stand";
+                }
+            }
+            si.sprites[playerSprite].draw(c, relativePos.x, relativePos.y, player.gameObject.width * sg.gu, player.gameObject.height * sg.gu);
         }
 
         //Move the view to the client player
@@ -168,7 +211,7 @@ app.game = (function() {
         let c = a.ctx;
         c.fillStyle = "white";
         c.fillRect(0, 0, a.viewport.width, a.viewport.height);
-        a.drawing.drawText("This is a temporary title", a.viewport.width / 2, a.viewport.height / 3, "48px Grobold", "rgba(100, 100, 100, 1.0)");
+        a.drawing.drawText("Tag Mania", a.viewport.width / 2, a.viewport.height / 3, "48px Grobold", "rgba(100, 100, 100, 1.0)");
 
 
         c.fillStyle = "rgb(240, 100, 100)";

@@ -32,7 +32,7 @@ app.audio = (function() {
      */
     function update() {
         //Check if the song has ended and if the game state is playing/paused
-        if (sa.sounds["backgroundMusic.mp3"].getAudioLength() != -1 && s.time.timers["backgroundMusic.mp3"] > sa.sounds["backgroundMusic.mp3"].getAudioLength() - 30.0) {
+        if (sa.sounds["backgroundMusic.mp3"].getAudioLength() != -1 && s.time.timers["backgroundMusic.mp3"] + 30 > sa.sounds["backgroundMusic.mp3"].getAudioLength()) {
             sa.sounds["backgroundMusic.mp3"].start();
             sa.sounds["backgroundMusic.mp3"].gain.gain.value = s.e.MUSIC_VOLUME;
             return;

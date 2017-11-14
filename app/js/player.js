@@ -35,7 +35,7 @@
         //Store their ID
         this.id = _id;
         //Create a rigid body for the player
-        this.gameObject = physics.getGameObject(_x, _y, 1, 1);
+        this.gameObject = physics.getGameObject(_x, _y, 1, 1.3158);
 
         //Init player input.  Everything is false by default
         this.moveLeft = false;

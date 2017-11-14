@@ -38,7 +38,7 @@ app.view = (function() {
         this.height = _height;
 
         //How many game units fit along the largest axis of the view
-        this.viewScale = 30;
+        this.viewScale = 40;
 
         //Limits
         this.xLimitMin = 0;
