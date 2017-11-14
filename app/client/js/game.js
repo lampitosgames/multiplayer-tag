@@ -211,7 +211,7 @@ app.game = (function() {
         let c = a.ctx;
         c.fillStyle = "white";
         c.fillRect(0, 0, a.viewport.width, a.viewport.height);
-        a.drawing.drawText("Tag Mania", a.viewport.width / 2, a.viewport.height / 3, "48px Grobold", "rgba(100, 100, 100, 1.0)");
+        a.drawing.drawText("The Spacemen Tag", a.viewport.width / 2, a.viewport.height / 3, "48px Grobold", "rgba(100, 100, 100, 1.0)");
 
 
         c.fillStyle = "rgb(240, 100, 100)";
