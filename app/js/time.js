@@ -1,11 +1,19 @@
 "use strict";
 
-//Timing module for delta time and FPS
+/**
+ * Timing module keeps track of the delta time and runtime of the app.
+ * Also allows for the creation of individual timers
+ * Client/server agnostic
+ */
 (function() {
     //Modules
     let utils;
-    let s, st;
+    let s,
+        st;
 
+    /**
+     * Init the timing module
+     */
     function init() {
         //Detect server/client and import other modules
         if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
@@ -15,6 +23,7 @@
             utils = app.utils;
             s = app.state;
         }
+        //Shorthand state
         st = s.time;
     }
 
@@ -50,14 +59,24 @@
         }
     }
 
+    /**
+     * Start a timer that will be synced between server and client and used
+     * for lag calculations
+     */
     function startClientTimer(_id, _serverTime) {
         st.clientTimers[_id] = _serverTime;
     }
 
+    /**
+     * Start a general-purpose timer
+     */
     function startNewTimer(_id) {
         st.timers[_id] = 0;
     }
 
+    /**
+     * Export Everything
+     */
     let _time = {
         calculateDeltaTime: calculateDeltaTime,
         startClientTimer: startClientTimer,

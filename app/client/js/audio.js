@@ -3,7 +3,9 @@
 //Audio module used for loading and manipulating audio files/buffers/data
 app.audio = (function() {
     let a = app;
-    let s, sa, sg;
+    let s,
+        sa,
+        sg;
 
     /**
      * Initialize the audio module
@@ -18,7 +20,7 @@ app.audio = (function() {
         createAudioContext();
 
         //Loop through and load all sounds
-        for (let i=0; i<sa.soundNames.length; i++) {
+        for (let i = 0; i < sa.soundNames.length; i++) {
             let sid = sa.soundNames[i];
             //Create a new sound object
             sa.sounds[sid] = new Sound(sid);
@@ -86,7 +88,7 @@ app.audio = (function() {
                         sound.gain.gain.value = s.e.DEFAULT_VOLUME;
                         //Resolve the promise
                         resolve();
-                    //Call the failure callback
+                        //Call the failure callback
                     }, reject);
                 }
                 //After creating the request, send it
@@ -126,9 +128,5 @@ app.audio = (function() {
         }
     }
 
-    return {
-        init: init,
-        update: update,
-        Sound: Sound
-    };
+    return {init: init, update: update, Sound: Sound};
 }());

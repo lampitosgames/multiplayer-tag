@@ -1,5 +1,11 @@
 "use strict";
 
+/**
+ * A sprite is an extension of a spritesheet.
+ * They can have any number of frames animated in any order from a spritesheet
+ * Since everything is pre-cahced and the frame to draw is calculated at drawtime
+ * they are very efficient
+ */
 app.Sprite = (function() {
     function Sprite(_name, _sheet, _frameArray, _animSpeed = 0.05) {
         this.name = _name;

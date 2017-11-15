@@ -1,7 +1,12 @@
 "use strict";
 
+/**
+ * The utils module provides generalized helper functions to the rest of the app
+ * it is server/client agnostic
+ * This project doesn't use every function in here.  I have this module in all my projects
+ */
 (function() {
-
+    //Modules
     let Vector;
 
     let _utils = {

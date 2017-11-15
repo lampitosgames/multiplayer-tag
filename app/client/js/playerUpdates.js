@@ -1,10 +1,19 @@
 "use strict";
 
+/**
+ * The playerUpdates module is ued to detect client input and determine when to update the server
+ */
 app.playerUpdates = (function() {
     let a = app;
-    let s, sp, sg;
+    let s,
+        sp,
+        sg;
 
+    /**
+     * Initialize the module and bind keys
+     */
     function init() {
+        //Shorthand state
         s = a.state;
         sp = s.player;
         sg = s.game;
@@ -22,6 +31,7 @@ app.playerUpdates = (function() {
                 sp.shouldUpdateServer = true;
             }
         });
+
         //Moving right
         a.keys.keyDown("d", "right", function() {
             if (!sp.moveRight) {
@@ -35,6 +45,7 @@ app.playerUpdates = (function() {
                 sp.shouldUpdateServer = true;
             }
         });
+
         //Jumping
         a.keys.keyDown("space", "w", "up", function() {
             if (!sp.shouldJump) {
@@ -80,38 +91,48 @@ app.playerUpdates = (function() {
             }
         });
 
-        //Mute audio
+        //Mute music (buggy.  Only turns it off until the audio loops or the game restarts)
         a.keys.keyUp("m", function() {
             s.audio.sounds["backgroundMusic.mp3"].gain.gain.value = 0.0;
         });
     }
 
+    /**
+     * Update the player updates module
+     */
     function update() {
+        //Grab the client player
         let me = sg.players[sg.clientID];
-        if (me == undefined) { return; }
+        //If the client doesn't have a player yet, return
+        if (me == undefined) {
+            return;
+        }
 
+        //Update movement state of the client based on input that happened since the last frame
         me.moveLeft = sp.moveLeft;
         me.moveRight = sp.moveRight;
         me.sprint = sp.sprint;
         me.gameObject.drop = sp.dropDown;
 
+        //If the player can jump
         if (me.gameObject.jump < 2) {
+            //Update jump logic
             me.shouldJump = sp.shouldJump;
+            //If a new jump is detected, play the jump sound
             if (sp.shouldJump) {
                 s.audio.sounds["jump.wav"].start();
             }
         }
-
+        //If the client should update the server (new inputs)
         if (sp.shouldUpdateServer) {
+            //Update the server and set the shouldUpdate to false
             a.socket.updateClientPlayer();
             sp.shouldUpdateServer = false;
         }
-
+        //Always reset shouldJump
         sp.shouldJump = false;
     }
 
-    return {
-        init: init,
-        update: update
-    }
+    //Export everything
+    return {init: init, update: update}
 }());

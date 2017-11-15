@@ -1,6 +1,9 @@
 "use strict";
 
-//Module that keeps track of the physics simulation
+/**
+ * Objects used by the physics module
+ * Client/server agnostic
+ */
 (function() {
     //Modules
     let Vector;
@@ -8,6 +11,9 @@
     let sp;
     let physics;
 
+    /**
+     * Init the physics objects module
+     */
     function init() {
         //Detect server/client and import other modules
         if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
@@ -23,6 +29,9 @@
         }
     }
 
+    /**
+     * Platform object
+     */
     function Platform(_x, _y, _width, _height) {
         this.id = sp.lastPlatformID++;
         this.pos = new Vector(_x, _y);
@@ -32,6 +41,9 @@
         giveCollisionHelpers.bind(this)();
     }
 
+    /**
+     * GameObject.  Used for players currently
+     */
     function GameObject(_x, _y, _width, _height, _vel = new Vector(0.0, 0.0)) {
         this.id = sp.lastGameObjectID++;
         //Kinematic Properties
@@ -53,6 +65,9 @@
         this.jump = 0;
         this.drop = false;
 
+        /**
+         * Update this game object.  Called once per update loop
+         */
         this.update = function() {
             //Add acceleration to the velocity scaled by dt.  Limit the velocity so collisions don't break
             this.vel.add(this.accel.multiplyScalar(time.dt())).limit(sp.speedLimit, 0.75);
@@ -64,12 +79,18 @@
             this.shouldGetGravity = true;
         }
 
+        /**
+         * Apply a gravitational force to the object if it should recieve gravity
+         */
         this.applyGravity = function(grav) {
             if (this.hasGravity) {
                 this.accel.add(grav);
             }
         }
 
+        /**
+         * Collide with platforms
+         */
         this.applyPlatformCollision = function(platforms) {
             if (!this.hasCollisions) {
                 //Object can't collide, so it is not colliding
@@ -77,7 +98,7 @@
                 return;
             }
             //Loop through all platforms
-            for (let k=0; k<platforms.length; k++) {
+            for (let k = 0; k < platforms.length; k++) {
                 let plat = platforms[k];
                 //Check the collision
                 let m = physics.AABB(this, plat);
@@ -142,14 +163,17 @@
                 drop: this.drop
             }
         }
+        /**
+         * Update data based on incoming data.  Lerp using the time delta
+         */
         this.setData = function(data, timeDelta = 0) {
             this.id = data.id;
             //Calculate new pos based on latency
-            let newPos = Vector(data.x + data.velX*timeDelta, data.y + data.velY*timeDelta);
+            let newPos = Vector(data.x + data.velX * timeDelta, data.y + data.velY * timeDelta);
             //If the changed distance is less than 1gu, lerp it
             if (newPos.distanceSq(this.pos) < 1) {
-                this.pos = new Vector(data.x + data.velX*timeDelta, data.y + data.velY*timeDelta).mix(this.pos, 0.5);
-            //Otherwise, just set the position
+                this.pos = new Vector(data.x + data.velX * timeDelta, data.y + data.velY * timeDelta).mix(this.pos, 0.5);
+                //Otherwise, just set the position
             } else {
                 this.pos = newPos;
             }
@@ -164,6 +188,9 @@
         }
     }
 
+    /**
+     * Collision manifold object
+     */
     function Manifold(_norm = new Vector(0.0, 0.0), _penetration = new Vector(0.0, 0.0)) {
         this.norm = _norm;
         this.penetration = _penetration;
@@ -210,6 +237,7 @@
         }
     }
 
+    //Export everything
     let _physicsObjects = {
         init: init,
         Manifold: Manifold,

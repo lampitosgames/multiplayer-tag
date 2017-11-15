@@ -3,11 +3,9 @@
 //Init global app
 let app = {};
 
+//When all scripts load, initialize the app
 window.onload = function() {
-    //Initialize the mouse so errors don't get thrown
-    // app.mouse = [0, 0];
-
-    //Initialize modules
+    //Initialize all modules in no particular order
     app.keys.init();
     app.utils.init();
     app.time.init();
@@ -23,16 +21,17 @@ window.onload = function() {
     app.particle.init();
     app.audio.init();
 
-    //Initialize main
+    //Initialize the game
     app.game.init();
 
-    //Start the game
+    //Start the game (this will call start on the modules that need it)
     app.game.start();
 
     //Store the total number of loading objects
     app.state.game.numAssetsLoading = app.state.game.loading.length;
 
     //Wait for all asset loading promises to resolve, removing each as it does
+    //This is used by the client loading state to draw the load bar
     for (let p=0; p<app.state.game.loading.length; p++) {
         app.state.game.loading[p].then(function() {
             //delete the promise from the list
@@ -42,12 +41,14 @@ window.onload = function() {
     }
 }
 
+//When onblur fires, pause the game (if the game is currently playing)
 window.onblur = function() {
     if (app.state.game.clientState == app.state.e.PLAYING) {
         app.state.game.clientState = app.state.e.PAUSED;
     }
 }
 
+//When onfocus fires, unpause the game (if it was paused)
 window.onfocus = function() {
     if (app.state.game.clientState == app.state.e.PAUSED) {
         app.state.game.clientState = app.state.e.PLAYING;

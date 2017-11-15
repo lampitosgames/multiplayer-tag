@@ -1,5 +1,10 @@
 "use strict";
 
+/**
+ * Spritesheets are wrappers for tileset images that pre-cache the locations of
+ * individual tiles and give them each an index.
+ * They load asynchronously
+ */
 app.Spritesheet = (function() {
     function Spritesheet(jsonFilepath) {
         //Is the spritesheet ready?

@@ -1,8 +1,17 @@
 "use strict";
 
+/**
+ * The view module is basically a 2d camera system
+ * Views have a ton of helper functions for moving them smoothly and easily based on
+ * other game object's positions
+ * They also have a scale
+ * They also are used to determine relative drawing positions of things in the world
+ */
 app.view = (function() {
     let a = app;
-    let s, sg, sv;
+    let s,
+        sg,
+        sv;
     let gu;
 
     function init() {
@@ -142,25 +151,28 @@ app.view = (function() {
         }
 
         this.setLimitsGU = function(_xMinGU, _xMaxGU, _yMinGU, _yMaxGU) {
-            this.setLimitsPixels(
-                _xMinGU * sg.gu,
-                _xMaxGU * sg.gu,
-                _yMinGU * sg.gu,
-                _yMaxGU * sg.gu
-            );
+            this.setLimitsPixels(_xMinGU * sg.gu, _xMaxGU * sg.gu, _yMinGU * sg.gu, _yMaxGU * sg.gu);
         }
 
         this.getObjectRelativePosition = function(obj, multiplyByGU) {
             if (obj.pos == undefined) {
 
                 return {
-                    x: obj.x*(multiplyByGU ? sg.gu : 1) - this.xMin(),
-                    y: obj.y*(multiplyByGU ? sg.gu : 1) - this.yMin()
+                    x: obj.x*(multiplyByGU
+                        ? sg.gu
+                        : 1) - this.xMin(),
+                    y: obj.y*(multiplyByGU
+                        ? sg.gu
+                        : 1) - this.yMin()
                 };
             } else {
                 return {
-                    x: obj.pos.x*(multiplyByGU ? sg.gu : 1) - this.xMin(),
-                    y: obj.pos.y*(multiplyByGU ? sg.gu : 1) - this.yMin()
+                    x: obj.pos.x*(multiplyByGU
+                        ? sg.gu
+                        : 1) - this.xMin(),
+                    y: obj.pos.y*(multiplyByGU
+                        ? sg.gu
+                        : 1) - this.yMin()
                 }
             }
         }
@@ -176,8 +188,5 @@ app.view = (function() {
             sv.active.yMax(sv.active.yMax());
         }
     }
-    return {
-        init: init,
-        View: View
-    }
+    return {init: init, View: View}
 }());

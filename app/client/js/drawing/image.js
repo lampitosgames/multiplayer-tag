@@ -4,7 +4,11 @@
 app.canvas = undefined;
 app.ctx = undefined;
 
-//Image module handles drawing things on the canvas
+/**
+ * Image module handles drawing the level onto the canvas.
+ * Everything is drawn relative to the active view and uses the current
+ * game scale
+ */
 app.image = (function() {
     //Shorthand variables
     let a = app;

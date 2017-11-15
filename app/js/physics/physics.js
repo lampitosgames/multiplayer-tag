@@ -1,6 +1,8 @@
 "use strict";
 
-//Module that keeps track of the physics simulation
+/**
+ * Physics module that simulates the level on both the client and the server
+ */
 (function() {
     //Modules
     let utils;
@@ -8,8 +10,13 @@
     let state;
     let sp;
     let Vector;
-    let Manifold, GameObject, Platform;
+    let Manifold,
+        GameObject,
+        Platform;
 
+    /**
+     * Init the physics module
+     */
     function init() {
         //Detect server/client and import other modules
         if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
@@ -34,6 +41,8 @@
 
         sp = state.physics;
 
+        //Set up physics constants in the state.  These are hardcoded values based
+        //on game design
         sp.speedLimit = 60;
 
         //Acceleration due to gravity
@@ -42,25 +51,28 @@
         // t = time to apex = 0.5s
         sp.jumpHeight = 4;
         sp.jumpTime = 0.3;
-        sp.gravity = new Vector(0.0, (2.0*sp.jumpHeight)/(sp.jumpTime*sp.jumpTime));
+        sp.gravity = new Vector(0.0, (2.0 * sp.jumpHeight) / (sp.jumpTime * sp.jumpTime));
 
         //Jump velocity
         // v = -sqrt(2*a*d)
         // a = sp.gravity
         // d = jump height
-        sp.jumpVel = new Vector(0.0, -Math.sqrt(2*sp.gravity.y*sp.jumpHeight));
+        sp.jumpVel = new Vector(0.0, -Math.sqrt(2 * sp.gravity.y * sp.jumpHeight));
 
         sp.moveSpeed = 10;
         sp.sprintMult = 2;
     }
 
+    /**
+     * Start the physics module
+     */
     function start() {
-        //Create a floor
-        // getPlatform(0, 20, 40, 1);
-        // let notSolid = getPlatform(10, 17, 10, 1);
-        // notSolid.solid = false;
+        //Currently does nothing
     }
 
+    /**
+     * Update the physics module
+     */
     function update() {
         //Update gameObjects
         for (const goID in sp.gameObjects) {
@@ -131,17 +143,21 @@
                 if (xOverlap < yOverlap) {
                     m.penetration = xOverlap;
                     //Get the direction normal
-                    m.norm = new Vector(t.x < 0 ? -1.0 : 1.0, 0.0);
+                    m.norm = new Vector(t.x < 0
+                        ? -1.0
+                        : 1.0, 0.0);
                 } else {
                     m.penetration = yOverlap;
-                    m.norm = new Vector(0.0, t.y < 0 ? -1.0 : 1.0);
+                    m.norm = new Vector(0.0, t.y < 0
+                        ? -1.0
+                        : 1.0);
                 }
             }
         }
         return m;
     }
 
-
+    //Export everything
     let _physics = {
         init: init,
         start: start,

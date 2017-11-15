@@ -1,24 +1,28 @@
-//Import server-side state
-import state from './serverState';
-//Import modules
+"use strict";
+
+//Import game modules
 import time from '../../js/time';
 import utils from '../../js/utils';
 import p from '../../js/player';
 import physics from '../../js/physics/physics';
 import physObj from '../../js/physics/physicsObjects';
-
 import levelLoader from '../../js/levelLoader';
 import scoring from '../../js/scoring';
+//Import server-side state
+import state from './serverState';
 
 //Script globals
 let io;
 let players;
-let sp, st, sg;
+let sp,
+    st,
+    sg;
 
 /**
  * Used to initialize the game.  It initializes other modules and gets shorthand variables
  */
 let init = (_io) => {
+    //Init all modules
     utils.init();
     time.init();
     p.init();
@@ -26,14 +30,17 @@ let init = (_io) => {
     physObj.init();
     levelLoader.init();
     scoring.init(_io);
+    //Store the socket.io server
     io = _io;
 
     //Store a shorthand reference to the players array
     players = state.game.players;
+    //Store shorthand state
     sp = state.physics;
     st = state.time;
     sg = state.game;
 
+    //Start modules that have a start function
     physics.start();
     levelLoader.start();
 }
@@ -56,9 +63,15 @@ let updateGame = () => {
     }
 }
 
+/**
+ * The network update Loop
+ * updates clients of changes at 30fps
+ */
 let updateNetwork = () => {
+    //Set timeout to call this method again
     setTimeout(updateNetwork, (1000 / 30));
 
+    //Grab player data to send to clients
     let playerData = {};
     for (const i in players) {
         let curData = playerData[players[i].id] = players[i].getData();
@@ -82,27 +95,28 @@ let updateNetwork = () => {
 /**
  * This function will update the server's version of a specific player's data from
  * their game client.
- * Then that data gets broadcast to all other clients.
  */
 let updatePlayerFromClient = (socket, data) => {
     players[data.id].setData(data);
 }
 
+/**
+ * If the attacking client detects that they tagged someone, trust them and update
+ * the game
+ */
 let declareNewAttacker = (attackerID) => {
     scoring.setNewAttacker(attackerID);
 }
 
 /**
- * Creates and adds a new player to the game.
- * Sends the new client current data on the game state, and sends all other clients the
- * new player.
+ * Creates and adds a new player to the game.  Sends that player their client ID
  */
 let addNewPlayer = (socket) => {
     //Create an ID for this player
     let id = state.game.lastPlayerID++;
 
     //Create a new player object and store it in the array
-    players[id] = new p.Player(id, utils.randomInt(5, 30), utils.randomInt(5, 10));
+    players[id] = new p.Player(id, utils.randomInt(5, 70), utils.randomInt(5, 60));
     players[id].gameObject.hasGravity = true;
     time.startClientTimer(id, 0);
 
@@ -125,13 +139,14 @@ let addNewPlayer = (socket) => {
 let disconnectPlayer = (id) => {
     //Remove the player's Game Object
     delete sp.gameObjects[players[id].gameObject.id];
-    //Remove the player's Timers
+    //Remove the player's timer
     delete st.clientTimers[id];
     //Remove the player's data in the player array
     delete players[id];
 
     //If that player was the attacker
     if (state.score.attackingPlayerID == id) {
+        //Force the scoring module to pick a new attacking player
         state.score.attackingPlayerID = undefined;
     }
     //Emit that a player disconnected

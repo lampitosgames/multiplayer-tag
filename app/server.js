@@ -1,11 +1,13 @@
+"use strict";
+
+//Node Modules
 import express from 'express';
 import http from 'http';
 import socketIO from 'socket.io';
-//Get the router
 import router from './router';
+//Game Modules
 import utils from './js/utils';
 import game from './server/js/game';
-// let utils = require('./js/utils');
 
 //Express app
 let app = express();
@@ -19,7 +21,7 @@ app.use(router);
 
 //On a new player connection
 io.on('connection', (socket) => {
-    //Bind createNewPlayer for when the cleint requests a player
+    //Bind createNewPlayer for when the client requests a player
     socket.on('createNewPlayer', () => {
         //Add a new player to the game and store the ID on this socket
         socket.playerID = game.addNewPlayer(socket);
@@ -42,13 +44,17 @@ io.on('connection', (socket) => {
     });
 });
 
+//Select the port from an environment variable or default to 8000
+//This is needed for Heroku
 let port = process.env.PORT || 8000;
-//Start a server on port 8000
+
+//Start the server listening on this port
 server.listen(port, () => {
     console.log("Server listening on " + server.address().port);
-    //Initialize the game
+    //Initialize the game.  Pass in our socket server instance
     game.init(io);
     //Start the game loop
     game.updateGame();
+    //Start the network loop
     game.updateNetwork();
 });

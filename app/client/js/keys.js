@@ -1,5 +1,10 @@
 "use strict";
 
+/**
+ * The keys module.  Lets any other module bind functions to 1 or more key events
+ * at a time.  Also handles mouse input / movement and supports binding functions to mouse
+ * scroll events
+ */
 app.keys = (function() {
     let a = app;
 
@@ -11,6 +16,10 @@ app.keys = (function() {
     let mouseDown;
     let scrollCallbacks = [];
 
+    /**
+     * Initialize the keys module and bind keydown and keyup events.
+     * Bind mouse events
+     */
     function init() {
         //Add an event listener for keydown
         window.addEventListener("keydown", function(e) {
@@ -58,13 +67,15 @@ app.keys = (function() {
         //Add an event listener for mouse wheel events
         window.addEventListener("wheel", function(e) {
             //Cross-browser compatible scroll delta
-            let delta = e.wheelDelta != undefined ? e.wheelDelta : -1 * e.deltaY;
+            let delta = e.wheelDelta != undefined
+                ? e.wheelDelta
+                : -1 * e.deltaY;
             //Loop through all callbacks
-            for (let i=0; i<scrollCallbacks.length; i++) {
+            for (let i = 0; i < scrollCallbacks.length; i++) {
                 //if down
                 if (delta < 0) {
                     scrollCallbacks[i](-1);
-                //if up
+                    //if up
                 } else if (delta > 0) {
                     scrollCallbacks[i](1);
                 }
@@ -72,22 +83,29 @@ app.keys = (function() {
         });
     }
 
+    /**
+     * Start the keys module after all other modules have been initialized
+     */
     function start() {
+        //Bind mousedown to the canvas
         app.canvas.addEventListener('mousedown', function() {
             mouseDown = true;
         });
+        //Bind mouseup to the canvas
         app.canvas.addEventListener('mouseup', function() {
             mouseDown = false;
         });
     }
 
     /**
-     * Bind a function to a key to be called when that key is pressed.
-     * Accepts the char code or a string
+     * Bind a function to one or more keys to be called when the key(s) is/are pressed.
+     * Accepts char code or a string representing the key(s)
+     * The first n arguments are keys to bind to
+     * The last argument is the callback function
      */
     function keyDown(key, callback) {
         //Loop through every argument and add the callback to it
-        for (let i=0; i<arguments.length-1; i++) {
+        for (let i = 0; i < arguments.length - 1; i++) {
             //Get the key code
             let keyCode = getKeyCode(arguments[i]);
             //If data does not exist for this key, create it
@@ -99,17 +117,19 @@ app.keys = (function() {
                 };
             }
             //Push the callback function to the array
-            keys[keyCode].keyDown.push(arguments[arguments.length-1]);
+            keys[keyCode].keyDown.push(arguments[arguments.length - 1]);
         }
     }
 
     /**
-     * Bind a function to a key to be called when that key is released.
-     * Accepts the char code or a string
+     * Bind a function to one or more keys to be called when the key(s) is/are released.
+     * Accepts char code or a string representing the key(s)
+     * The first n arguments are keys to bind to
+     * The last argument is the callback function
      */
     function keyUp(key, callback) {
         //Loop through every argument and add the callback to it
-        for (let i=0; i<arguments.length-1; i++) {
+        for (let i = 0; i < arguments.length - 1; i++) {
             //Get the key code
             let keyCode = getKeyCode(arguments[i]);
             //If data does not exist for this key, create it
@@ -121,7 +141,7 @@ app.keys = (function() {
                 };
             }
             //Push the callback function to the array
-            keys[keyCode].keyUp.push(arguments[arguments.length-1]);
+            keys[keyCode].keyUp.push(arguments[arguments.length - 1]);
         }
     }
 
@@ -155,7 +175,8 @@ app.keys = (function() {
     /**
      * Returns the numerical keycode given a string
      * Does nothing if an integer is passed
-     * This only covers the most common keys
+     * This only covers the most common keys.  More can be added easily by adding
+     * their string to the switch statement
      */
     function getKeyCode(key) {
         let keyCode = key;
@@ -224,6 +245,7 @@ app.keys = (function() {
         return keyCode;
     }
 
+    //Export everything
     return {
         init: init,
         start: start,

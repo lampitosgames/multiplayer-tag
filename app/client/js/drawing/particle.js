@@ -1,7 +1,8 @@
 "use strict";
 
 /**
- * Incredibly basic particle system to meet the minimum requirements
+ * Incredibly basic particle system to meet the minimum requirements.  Not gonna comment because it is
+ * hacked together and I'm running out of time.
  */
 app.particle = (function() {
     let a = app;

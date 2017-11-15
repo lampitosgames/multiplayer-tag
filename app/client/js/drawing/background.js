@@ -1,5 +1,10 @@
 "use strict";
 
+/**
+ * A background is an image that moves relative to the view.
+ * It gets stretched to the size of the view in the image module
+ * Backgrounds are loaded asynchronously
+ */
 app.Background = (function() {
     function Background(_name) {
         //Is the background ready?

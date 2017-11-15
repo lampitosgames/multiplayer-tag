@@ -73,7 +73,7 @@ app.state = (function() {
         jumpVel: undefined,
         moveSpeed: undefined,
         sprintMult: undefined,
-        platforms:[],
+        platforms: [],
         gameObjects: {}
     };
 
@@ -89,27 +89,19 @@ app.state = (function() {
     let audio = {
         audioCtx: undefined,
         soundNames: [
-            "backgroundMusic.mp3",
-            "countdown.wav",
-            "gameOver.wav",
-            "jump.wav",
-            "playerTagged.wav"
+            "backgroundMusic.mp3", "countdown.wav", "gameOver.wav", "jump.wav", "playerTagged.wav"
         ],
         sounds: {}
     }
 
     let image = {
         tilesheetNames: [
-            "core_spritesheet",
-            "winter_spritesheet"
+            "core_spritesheet", "winter_spritesheet"
         ],
         spritesheetNames: [
-            "p1_spritesheet",
-            "p2_spritesheet"
+            "p1_spritesheet", "p2_spritesheet"
         ],
-        backgroundNames: [
-            "bg_grasslands.png",
-        ],
+        backgroundNames: ["bg_grasslands.png"],
         tutorialImg: undefined,
         tilesheets: {},
         spritesheets: {},

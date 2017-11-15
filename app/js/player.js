@@ -1,15 +1,25 @@
 "use strict";
 
-//Player Module that exports a player class
+/**
+ * Player module that exports a player class
+ * Instances of the player can be created on both the server and the client and
+ * synced between them
+ */
 (function() {
-    //modules
+    //Modules
     let Vector;
     let time;
     let physics;
 
-    //State
-    let s, sp, sg, st;
+    //State shorthand
+    let s,
+        sp,
+        sg,
+        st;
 
+    /**
+     * Init the player module
+     */
     function init() {
         //Detect server/client and import other modules
         if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
@@ -23,6 +33,7 @@
             physics = app.physics;
             s = app.state;
         }
+        //Get shorthand state
         sp = s.physics;
         sg = s.game;
         st = s.time;
@@ -37,14 +48,14 @@
         //Create a rigid body for the player
         this.gameObject = physics.getGameObject(_x, _y, 1, 1.3158);
 
-        //Init player input.  Everything is false by default
+        //Player input tracking.  Everything is false by default
         this.moveLeft = false;
         this.moveRight = false;
         this.sprint = false;
         this.shouldJump = false;
         this.jump = 0;
 
-        //Gameplay variables
+        //Gameplay state variables
         this.attacking = false;
         this.attackTimer = 0;
 
@@ -52,16 +63,21 @@
          * Called every update.  Should be time independent
          */
         this.update = function() {
-            //If moving left
+            //Set the hor velocity to zero
             this.gameObject.vel.x = 0;
+            //If moving left, move left
             if (this.moveLeft) {
-                this.gameObject.vel.add(new Vector(this.sprint ? -sp.moveSpeed * sp.sprintMult : -sp.moveSpeed, 0.0));
+                this.gameObject.vel.add(new Vector(this.sprint
+                    ? -sp.moveSpeed * sp.sprintMult
+                    : -sp.moveSpeed, 0.0));
             }
-            //If moving right
+            //If moving right, move right
             if (this.moveRight) {
-                this.gameObject.vel.add(new Vector(this.sprint ? sp.moveSpeed * sp.sprintMult : sp.moveSpeed, 0.0));
+                this.gameObject.vel.add(new Vector(this.sprint
+                    ? sp.moveSpeed * sp.sprintMult
+                    : sp.moveSpeed, 0.0));
             }
-            //If jumping
+            //If jumping, jump
             if (this.shouldJump == true) {
                 this.gameObject.vel.y = sp.jumpVel.y;
                 this.gameObject.jump++;
@@ -115,6 +131,7 @@
         }
     }
 
+    //Export everything
     let _Player = {
         Player: Player,
         init: init
